@@ -1,23 +1,31 @@
 import tkinter as tk
-from funciones.funcionesdebotones import redirigir_inicio, redirigir_inventario, redirigir_productos, redirigir_usuario
 from tkinter import messagebox
+import mysql.connector
 
 #metodo del boton1
-def boton1(): 
-    ventana_boton1=tk.Toplevel()
-    ventana_boton1.title ('boton1')
-    ventana_boton1.geometry("800x600")
-    ventana_boton1.configure(bg="purple")
-    ventana_boton1.mainloop()
+def boton1():
+    print("Fino") 
     
-
 # Metodo de inicio de session
 def iniciar_sesion():
     usuario = usuario_entry.get()
     contrasena = password_entry.get()
 
+    #conexion a la base de datos
+    conexion = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "",
+        database = "cinelandia"
+    )
+
+    cursor= conexion.cursor()
+    cursor.execute("select usuario from usuario where usuario = %s and contraseña = %s", (usuario,contrasena))    
+    resultado= cursor.fetchone()
+    conexion.close()
+
     # Verificar las credenciales de inicio de sesión
-    if usuario == "admin" and contrasena == "123456":
+    if resultado is not None: 
         messagebox.showinfo("Inicio de sesión exitoso", f"Bienvenido, {usuario}!")
         ventana.withdraw()  # Ocultar la ventana de inicio de sesión
 
@@ -68,6 +76,8 @@ def iniciar_sesion():
 
 
         ventana_dashboard.mainloop()
+
+        ventana_dashboard.quit()
     else:
         messagebox.showerror("Inicio de sesión fallido", "Credenciales incorrectas")
 
