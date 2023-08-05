@@ -1,11 +1,52 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 import mysql.connector
 
+#Funcion de la data de usuario
+def datos_tabla_usuarios(tabla):
+    #insercion de datos
+    tabla.insert("", "end", values=("usuario1", "administrador", "horario"))
+    tabla.insert("", "end", values=("usuario2", "empleado","horario"))
+    tabla.insert("", "end", values=("usuario3", "empleada", "horario"))
+
 #metodo del boton1
-def boton1():
-    print("Fino") 
+def usuarios():
+    etiqueta_titulo.config(text="Usuarios del sistema")
+
+    #aplicar tema x
+    estilo= ttk.Style()
+    estilo.theme_use("clam")
+
+    #crear la tabla de usuario del contenedor derecho
+    tabla_usuarios = ttk.Treeview(contenido, columns=("Usuario", "Rol", "horario"), show="headings")
+
+    tabla_usuarios.heading("Usuario", text="Usuario del Sistema") 
+    tabla_usuarios.heading("Rol", text="Rol del Usuario")
+    tabla_usuarios.heading("horario", text="Horario de entrada")
+
+    #ajustar tamaño de columnas
+    tabla_usuarios.column("Usuario", width=100)
+    tabla_usuarios.column("Rol", width=100)
+    tabla_usuarios.column("horario",width=100)
+
+    #contenido de la tabla
+    datos_tabla_usuarios(tabla_usuarios)
+
+    #mostrar la tabla en el contenedor derecho
+    tabla_usuarios.pack(fill="both",expand=True)
+
+#metodo del boton2
+def Inventario():
+    etiqueta_titulo.config(text="Inventario General")
+    #contenido 
+    contenido.config(text="Inventario de los Productos de Cinelandia")
     
+#metodo del boton3
+def boton3():
+    print("fino3")
+
+
 # Metodo de inicio de session
 def iniciar_sesion():
     usuario = usuario_entry.get()
@@ -50,21 +91,24 @@ def iniciar_sesion():
         etiqueta_menu.pack(pady=10)
 
         # Opción 1
-        opcion1 = tk.Button(panel_izquierdo, text="Opción 1", bg="white", padx=10, command=boton1, pady=5)
+        opcion1 = tk.Button(panel_izquierdo, text="Usuarios", bg="white", padx=10, command=usuarios, pady=5)
         opcion1.pack(pady=5)
         
 
         # Opción 2
-        opcion2 = tk.Button(panel_izquierdo, text="Opción 2", bg="white", padx=10, pady=5)
+        opcion2 = tk.Button(panel_izquierdo, text="Inventario", bg="white", padx=10, command=Inventario, pady=5)
         opcion2.pack(pady=5)
 
         # Opción 3
-        opcion3 = tk.Button(panel_izquierdo, text="Opción 3", bg="white", padx=10, pady=5)
+        opcion3 = tk.Button(panel_izquierdo, text="Opción 3", bg="white", padx=10, command=boton3, pady=5)
         opcion3.pack(pady=5)
 
         # Contenedor a la derecha
         contenedor_derecho = tk.Frame(ventana_dashboard, bg="white")
         contenedor_derecho.pack(side="right", fill="both", expand=True)
+
+        #elementos del contenedor derecho
+        global etiqueta_titulo, contenido
 
         # Agregar elementos al contenedor derecho
         etiqueta_titulo = tk.Label(contenedor_derecho, text="Contenido", bg="white", font=("Arial", 16, "bold"))
@@ -77,7 +121,7 @@ def iniciar_sesion():
 
         ventana_dashboard.mainloop()
 
-        ventana_dashboard.quit()
+        ventana_dashboard.destroy()
     else:
         messagebox.showerror("Inicio de sesión fallido", "Credenciales incorrectas")
 
@@ -119,5 +163,5 @@ boton_iniciar_sesion.place(relx=0.4, rely=0.8, relwidth=0.5, relheight=0.2)
 # Iniciar el bucle principal de la ventana
 ventana.mainloop()
 
-ventana.quit()
+ventana.destroy()
 
