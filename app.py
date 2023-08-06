@@ -2,33 +2,67 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 import mysql.connector
+global conexion
+tabla_usuarios=None
+tabla_inventario=None
 
 #Funcion de la data de usuario
 def datos_tabla_usuarios(tabla):
-    #insercion de datos
-    tabla.insert("", "end", values=("usuario1", "administrador", "horario"))
-    tabla.insert("", "end", values=("usuario2", "empleado","horario"))
-    tabla.insert("", "end", values=("usuario3", "empleada", "horario"))
+    #conexion global
+    global conexion
+    cursor = conexion.cursor()
+    cursor.execute("select usuario, fecha_ingreso, id_cargo from usuario")
+    resultado= cursor.fetchall()
+    for usuario, fecha_ingreso, id_cargo in resultado:
+
+        #insercion de datos
+        tabla.insert("", "end", values=(usuario, id_cargo, fecha_ingreso))
+
+#Funcion de la data de inventario
+def datos_tabla_inventario(tabla):
+    #conexion global
+    global conexion
+    cursor = conexion.cursor()
+    cursor.execute("select descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor from productos")
+    resultado= cursor.fetchall()
+    for descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor in resultado:
+
+        #insercion de datos
+        tabla.insert("", "end", values=(descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor))        
+  
 
 #metodo del boton1
 def usuarios():
     etiqueta_titulo.config(text="Usuarios del sistema")
+    global tabla_usuarios
+    if tabla_usuarios and tabla_usuarios.winfo_exists():
+        tabla_usuarios.destroy()
+#si ya existe la tabla inventario/ destruir
+    global tabla_inventario
+    if tabla_inventario and tabla_inventario.winfo_exists():
+        tabla_inventario.destroy()
 
     #aplicar tema x
     estilo= ttk.Style()
     estilo.theme_use("clam")
 
     #crear la tabla de usuario del contenedor derecho
-    tabla_usuarios = ttk.Treeview(contenido, columns=("Usuario", "Rol", "horario"), show="headings")
+    tabla_usuarios = ttk.Treeview(contenido, columns=("Usuario", "Rol", "horario", "boton1", "boton2", "boton3"), show="headings")
 
     tabla_usuarios.heading("Usuario", text="Usuario del Sistema") 
     tabla_usuarios.heading("Rol", text="Rol del Usuario")
     tabla_usuarios.heading("horario", text="Horario de entrada")
+    tabla_usuarios.heading("boton1", text="ver usuario")
+    tabla_usuarios.heading("boton2", text="editar usuario")
+    tabla_usuarios.heading("boton3", text="eliminar usuario")
 
     #ajustar tamaño de columnas
     tabla_usuarios.column("Usuario", width=100)
     tabla_usuarios.column("Rol", width=100)
     tabla_usuarios.column("horario",width=100)
+    tabla_usuarios.column("boton1", width=50)
+    tabla_usuarios.column("boton2", width=50)
+    tabla_usuarios.column("boton3",width=50)
 
     #contenido de la tabla
     datos_tabla_usuarios(tabla_usuarios)
@@ -39,8 +73,38 @@ def usuarios():
 #metodo del boton2
 def Inventario():
     etiqueta_titulo.config(text="Inventario General")
+#si ya existe la tabla usuarios/ destruir
+    if tabla_usuarios and tabla_usuarios.winfo_exists():
+        tabla_usuarios.destroy()
+#si ya existe la tabla inventario/ destruir
+    global tabla_inventario
+    if tabla_inventario and tabla_inventario.winfo_exists():
+        tabla_inventario.destroy()
+
     #contenido 
     contenido.config(text="Inventario de los Productos de Cinelandia")
+
+    #crear la tabla de usuario del contenedor derecho
+    tabla_inventario = ttk.Treeview(contenido, columns=("descripcion_producto", "cantidad_total", "fecha_vencimiento", "id_proveedor", "costo_mayor"), show="headings", padding=5)
+
+    tabla_inventario.heading("descripcion_producto", text="producto") 
+    tabla_inventario.heading("cantidad_total", text="cantidad de productos")
+    tabla_inventario.heading("fecha_vencimiento", text="fecha de vencimiento")
+    tabla_inventario.heading("id_proveedor", text="proveedores")
+    tabla_inventario.heading("costo_mayor", text="precio de compra")
+
+    #ajustar tamaño de columnas
+    tabla_inventario.column("descripcion_producto", width=150)
+    tabla_inventario.column("cantidad_total", width=100)
+    tabla_inventario.column("fecha_vencimiento",width=100)
+    tabla_inventario.column("id_proveedor", width=50)
+    tabla_inventario.column("costo_mayor", width=50)
+
+    #contenido de la tabla
+    datos_tabla_inventario(tabla_inventario)
+
+    #mostrar la tabla en el contenedor derecho
+    tabla_inventario.pack(fill="both",expand=True)
     
 #metodo del boton3
 def boton3():
@@ -49,6 +113,7 @@ def boton3():
 
 # Metodo de inicio de session
 def iniciar_sesion():
+    global conexion #definimos la variable conexion como global
     usuario = usuario_entry.get()
     contrasena = password_entry.get()
 
@@ -63,7 +128,7 @@ def iniciar_sesion():
     cursor= conexion.cursor()
     cursor.execute("select usuario from usuario where usuario = %s and contraseña = %s", (usuario,contrasena))    
     resultado= cursor.fetchone()
-    conexion.close()
+    
 
     # Verificar las credenciales de inicio de sesión
     if resultado is not None: 
@@ -120,7 +185,7 @@ def iniciar_sesion():
 
 
         ventana_dashboard.mainloop()
-
+        conexion.close()
         ventana_dashboard.destroy()
     else:
         messagebox.showerror("Inicio de sesión fallido", "Credenciales incorrectas")
