@@ -30,14 +30,53 @@ def datos_tabla_inventario(tabla):
         #insercion de datos
         tabla.insert("", "end", values=(descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor))        
   
+def crear_usuario():
+    # Abrir la ventana usuario
+    ventana_crear_usuario = tk.Toplevel()
+    ventana_crear_usuario.title("crear usuario")
+    ventana_crear_usuario.configure(bg="white")
+   
+    # Crear un marco para el formulario
+    formulario_crear = tk.Frame(ventana_crear_usuario , bg="pink", padx=20, pady=20, borderwidth=2, relief="groove")
+    formulario_crear.pack(padx=20, pady=20)
 
+    titulo_label = tk.Label(formulario_crear, text="Crear Usuario:", bg="black", fg="white")
+    titulo_label.pack(pady=10)
+    # Etiqueta de usuario
+    usuario_label = tk.Label(formulario_crear, text="Usuario:", bg="black", fg="white")
+    usuario_label.pack(pady=5)
+
+   # Cuadro de entrada de usuario
+    usuario_crear = tk.Entry(formulario_crear, bg="white")
+    usuario_crear.pack(pady=5) 
+
+    # Etiqueta de contraseña
+    password_label = tk.Label(formulario_crear, text="Contraseña:", bg="black", fg="white")
+    password_label.pack(pady=5)
+
+    # Cuadro de entrada de contraseña
+    password_entry = tk.Entry(formulario_crear, show="*", bg="white")
+    password_entry.pack(pady=5)
+
+    # Etiqueta para confirmar contraseña
+    password_label = tk.Label(formulario_crear, text="confirmar Contraseña:", bg="black", fg="white")
+    password_label.pack(pady=5)
+
+    # Cuadro de entrada de contraseña para confirmar
+    password_crear_confirmar = tk.Entry(formulario_crear, show="*", bg="white")
+    password_crear_confirmar.pack(pady=5)
+
+    # Botón de inicio de sesión
+    boton_iniciar_sesion = tk.Button(formulario_crear, text="Crear Usuario", command=crear_usuario, activebackground="#F50743", font=("helvetica", 12))
+    boton_iniciar_sesion.pack(pady=10, ipadx=10)
+    
 #metodo del boton1
 def usuarios():
     etiqueta_titulo.config(text="Usuarios del sistema")
     global tabla_usuarios
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
-#si ya existe la tabla inventario/ destruir
+    #si ya existe la tabla inventario/ destruir
     global tabla_inventario
     if tabla_inventario and tabla_inventario.winfo_exists():
         tabla_inventario.destroy()
@@ -69,6 +108,10 @@ def usuarios():
 
     #mostrar la tabla en el contenedor derecho
     tabla_usuarios.pack(fill="both",expand=True)
+
+    #boton de crear usuario
+    boton_crear_usuario=tk.Button(contenido,text="crear usuario", command=crear_usuario)
+    boton_crear_usuario.pack(side="left",padx=10,pady=5)
 
 #metodo del boton2
 def Inventario():
