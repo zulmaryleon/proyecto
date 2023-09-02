@@ -13,9 +13,12 @@ tabla_proveedor=None
 tabla_movimientos=None
 
 boton_guardar_usuario=None
+<<<<<<< HEAD
 boton_guardar_producto=None
 boton_crear_proveedor=None
 boton_guardar_proveedor=None
+=======
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
 boton_guardar_inventario=None
 
 #metodo de cerrar ventanas
@@ -168,8 +171,11 @@ def crear_usuario():
     boton_guardar_usuario = tk.Button(formulario_crear, text="Crear Usuario", command=guardar_usuario, activebackground="#F50743", font=("helvetica", 12))
     boton_guardar_usuario.pack(pady=10, ipadx=10)
 
+<<<<<<< HEAD
 #crear formulario de inventario
 
+=======
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
 def crear_producto():
     # Abrir la ventana producto
     ventana_crear_producto = tk.Toplevel()
@@ -180,17 +186,26 @@ def crear_producto():
     formulario_crear = tk.Frame(ventana_crear_producto , bg="pink", padx=20, pady=20, borderwidth=2, relief="groove")
     formulario_crear.pack(padx=20, pady=20)
 
+<<<<<<< HEAD
     titulo_label = tk.Label(formulario_crear, text="Crear Producto:", bg="black", fg="white")
     titulo_label.pack(pady=10)
 
     # Etiqueta de producto
     producto_label = tk.Label(formulario_crear, text="Producto:", bg="black", fg="white")
+=======
+    titulo_label = tk.Label(formulario_crear, text="Crear producto:", bg="black", fg="white")
+    titulo_label.pack(pady=10)
+
+    # Etiqueta de producto
+    producto_label = tk.Label(formulario_crear, text="producto:", bg="black", fg="white")
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
     producto_label.pack(pady=5)
 
    # Cuadro de entrada de producto
     producto_crear = tk.Entry(formulario_crear, bg="white")
     producto_crear.pack(pady=5) 
 
+<<<<<<< HEAD
     # Etiqueta de categoria
     categoria_label = tk.Label(formulario_crear, text="Categoria:", bg="black", fg="white")
     categoria_label.pack(pady=5)
@@ -232,12 +247,54 @@ def crear_producto():
     proveedor_crear.pack(pady=5)
 
 
+=======
+    # Etiqueta para rol del usuario
+    categoria_label = tk.Label(formulario_crear, text="Categoria:", bg="black", fg="white")
+    categoria_label.pack(pady=5)
+
+    # Cuadro de entrada de rol del usuario
+    categoria_entry = tk.Entry(formulario_crear, bg="white")
+    categoria_entry.pack(pady=5)
+
+    # Etiqueta de producto
+    cantidad_label = tk.Label(formulario_crear, text="cantidad:", bg="black", fg="white")
+    cantidad_label.pack(pady=5)
+
+    # Cuadro de entrada de producto
+    cantidad_crear = tk.Entry(formulario_crear, bg="white")
+    cantidad_crear.pack(pady=5) 
+    
+    # Etiqueta de producto
+    precio_label = tk.Label(formulario_crear, text="precio al mayor:", bg="black", fg="white")
+    precio_label.pack(pady=5)
+
+    # Cuadro de entrada de producto
+    precio_crear = tk.Entry(formulario_crear, bg="white")
+    precio_crear.pack(pady=5) 
+
+     # Etiqueta de producto
+    fecha_vencimiento_label = tk.Label(formulario_crear, text="Fecha de vencimiento:", bg="black", fg="white")
+    fecha_vencimiento_label.pack(pady=5)
+
+    # Cuadro de entrada de producto
+    fecha_vencimiento_crear = tk.Entry(formulario_crear, bg="white")
+    fecha_vencimiento_crear.pack(pady=5) 
+
+     # Etiqueta de producto
+    proveedor_label = tk.Label(formulario_crear, text="Proveedor:", bg="black", fg="white")
+    proveedor_label.pack(pady=5)
+
+    # Cuadro de entrada de producto
+    proveedor_crear = tk.Entry(formulario_crear, bg="white")
+    proveedor_crear.pack(pady=5) 
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
 
     def guardar_producto():
         global conexion #definimos la variable conexion como global
         producto = producto_crear.get()
         categoria = categoria_entry.get()
         cantidad = cantidad_crear.get()
+<<<<<<< HEAD
         precio_mayor=precio_crear.get()
         fecha_vencimiento= fecha_vencimiento_crear.get()
         proveedor = proveedor_crear.get()
@@ -246,6 +303,14 @@ def crear_producto():
      
 
        
+=======
+        precio_mayor =precio_crear.get()
+        fecha_vencimiento = fecha_vencimiento_crear.get()
+        proveedor = proveedor_crear.get()
+
+        fecha_actual=datetime.date.today()
+
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
             #creamos una sentencia para guardar los datos en la base de datos
         try:
             #abrir cursor
@@ -260,11 +325,16 @@ def crear_producto():
             cursor.close()
             ventana_crear_producto.destroy()
 
+<<<<<<< HEAD
             messagebox.showinfo("Producto creado", 'Se ha registrado el producto correctamente')
+=======
+            messagebox.showinfo("Usuario creado", 'Se ha registrado el producto correctamente')
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
         except Exception as e:
             conexion.rollback()
             messagebox.showerror("Error", f"No se ha podido registrar el producto: {str(e)}")
 
+<<<<<<< HEAD
     # Botón de guardar producto
     boton_guardar_producto = tk.Button(formulario_crear, text="Crear Producto", command=guardar_producto, activebackground="#F50743", font=("helvetica", 12))
     boton_guardar_producto.pack(pady=10, ipadx=10)
@@ -343,6 +413,17 @@ def crear_proveedor():
 def usuarios():
     etiqueta_titulo.config(text="Usuarios del sistema")
     global tabla_usuarios, boton_guardar_usuario, tabla_inventario,boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos
+=======
+    
+    # Botón de guardar usuario
+    boton_guardar_usuario = tk.Button(formulario_crear, text="Crear Usuario", command=guardar_producto, activebackground="#F50743", font=("helvetica", 12))
+    boton_guardar_usuario.pack(pady=10, ipadx=10)    
+    
+#metodo del boton1
+def usuarios():
+    etiqueta_titulo.config(text="Usuarios del sistema")
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
     #si ya existe la tabla inventario/ destruir
@@ -353,6 +434,7 @@ def usuarios():
     if boton_guardar_usuario and boton_guardar_usuario.winfo_exists():
         boton_guardar_usuario.destroy()
 
+<<<<<<< HEAD
     if tabla_proveedor and tabla_proveedor.winfo_exists():
         tabla_proveedor.destroy()
 
@@ -365,6 +447,11 @@ def usuarios():
     if tabla_movimientos and tabla_movimientos.winfo_exists():
         tabla_movimientos.destroy()
 
+=======
+    if boton_guardar_inventario: 
+        boton_guardar_inventario.destroy()
+        
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
     #aplicar tema x
     estilo= ttk.Style()
     estilo.theme_use("clam")
@@ -402,17 +489,26 @@ def usuarios():
 #metodo del boton2
 def Inventario():
     etiqueta_titulo.config(text="Inventario General")
+<<<<<<< HEAD
     global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor,tabla_movimientos
+=======
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
     #si ya existe la tabla usuarios/ destruir
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
     #si ya existe la tabla inventario/ destruir
+<<<<<<< HEAD
 
     if tabla_inventario and tabla_inventario.winfo_exists():
+=======
+    global tabla_inventario, boton_guardar_inventario
+    if tabla_inventario:
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
         tabla_inventario.destroy()
 
     if boton_guardar_usuario and boton_guardar_usuario.winfo_exists():
         boton_guardar_usuario.destroy()
+<<<<<<< HEAD
 
     if tabla_proveedor and tabla_proveedor.winfo_exists():
         tabla_proveedor.destroy()
@@ -425,6 +521,10 @@ def Inventario():
 
     if tabla_movimientos and tabla_movimientos.winfo_exists():
         tabla_movimientos.destroy()
+=======
+    if boton_guardar_inventario: 
+        boton_guardar_inventario.destroy()
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
     #contenido 
     contenido.config(text="Inventario de los Productos de Cinelandia")
 
@@ -450,10 +550,16 @@ def Inventario():
     #mostrar la tabla en el contenedor derecho
     tabla_inventario.pack(fill="both",expand=True)
 
+<<<<<<< HEAD
     #boton de crear producto
     boton_guardar_inventario=tk.Button(contenido,text="crear producto", command=crear_producto)
     boton_guardar_inventario.pack(side="left",padx=10,pady=5)
 
+=======
+    #boton de crear usuario
+    boton_guardar_inventario=tk.Button(contenido,text="crear producto", command=crear_producto)
+    boton_guardar_inventario.pack(side="left",padx=10,pady=5)
+>>>>>>> fe45755e22f7169233b8b47d1903562ec09ba011
     
 #metodo del boton3
 def Proveedor():
