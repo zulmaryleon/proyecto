@@ -1,13 +1,22 @@
+
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 import mysql.connector
 import datetime
+
+
 global conexion
 tabla_usuarios=None
 tabla_inventario=None
+tabla_proveedor=None
+tabla_movimientos=None
 
 boton_guardar_usuario=None
+boton_guardar_producto=None
+boton_crear_proveedor=None
+boton_guardar_proveedor=None
+boton_guardar_inventario=None
 
 #metodo de cerrar ventanas
 def cerrar_sesion(ventana_dashboard):
@@ -35,6 +44,10 @@ def datos_tabla_usuarios(tabla):
 def datos_tabla_inventario(tabla):
     #conexion global
     global conexion
+
+    #eliminamos todos lo elementos antes de actualizar
+    tabla.delete(*tabla.get_children())
+
     cursor = conexion.cursor()
     cursor.execute("select descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor from productos")
     resultado= cursor.fetchall()
@@ -43,6 +56,38 @@ def datos_tabla_inventario(tabla):
         #insercion de datos
         tabla.insert("", "end", values=(descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor))        
   
+  #Funcion de la data de proveedores
+def datos_tabla_proveedor(tabla):
+    #conexion global
+    global conexion
+
+    #eliminamos todos lo elementos antes de actualizar
+    tabla.delete(*tabla.get_children())
+
+    cursor = conexion.cursor()
+    cursor.execute("select nombre, codigo, id_prefijo_documento from proveedor")
+    resultado= cursor.fetchall()
+    for nombre, codigo, id_prefijo_documento in resultado:
+
+        #insercion de datos
+        tabla.insert("", "end", values=(nombre, codigo, id_prefijo_documento))
+
+#Funcion de la data de movimientos
+def datos_tabla_movimientos(tabla):
+    #conexion global
+    global conexion
+
+    #eliminamos todos lo elementos antes de actualizar
+    tabla.delete(*tabla.get_children())
+
+    cursor = conexion.cursor()
+    cursor.execute("select id_movimientos, descripcion_movimiento, id_status_movimientos,total, id_usuario, fecha_registro from movimientos")
+    resultado= cursor.fetchall()
+    for id_movimientos, descripcion_movimiento, id_status_movimientos, total, id_usuario, fecha_registro  in resultado:
+
+        #insercion de datos
+        tabla.insert("", "end", values=(id_movimientos, descripcion_movimiento, id_status_movimientos,total))
+
 def crear_usuario():
     # Abrir la ventana usuario
     ventana_crear_usuario = tk.Toplevel()
@@ -122,20 +167,203 @@ def crear_usuario():
     # Botón de guardar usuario
     boton_guardar_usuario = tk.Button(formulario_crear, text="Crear Usuario", command=guardar_usuario, activebackground="#F50743", font=("helvetica", 12))
     boton_guardar_usuario.pack(pady=10, ipadx=10)
-    
+
+#crear formulario de inventario
+
+def crear_producto():
+    # Abrir la ventana producto
+    ventana_crear_producto = tk.Toplevel()
+    ventana_crear_producto.title("crear producto")
+    ventana_crear_producto.configure(bg="white")
+   
+    # Crear un marco para el formulario
+    formulario_crear = tk.Frame(ventana_crear_producto , bg="pink", padx=20, pady=20, borderwidth=2, relief="groove")
+    formulario_crear.pack(padx=20, pady=20)
+
+    titulo_label = tk.Label(formulario_crear, text="Crear Producto:", bg="black", fg="white")
+    titulo_label.pack(pady=10)
+
+    # Etiqueta de producto
+    producto_label = tk.Label(formulario_crear, text="Producto:", bg="black", fg="white")
+    producto_label.pack(pady=5)
+
+   # Cuadro de entrada de producto
+    producto_crear = tk.Entry(formulario_crear, bg="white")
+    producto_crear.pack(pady=5) 
+
+    # Etiqueta de categoria
+    categoria_label = tk.Label(formulario_crear, text="Categoria:", bg="black", fg="white")
+    categoria_label.pack(pady=5)
+
+    # Cuadro de entrada de categoria
+    categoria_entry = tk.Entry(formulario_crear, bg="white")
+    categoria_entry.pack(pady=5)
+
+    # Etiqueta para cantidad
+    cantidad_label = tk.Label(formulario_crear, text="Cantidad:", bg="black", fg="white")
+    cantidad_label.pack(pady=5)
+
+    # Cuadro de entrada de cantidad
+    cantidad_crear = tk.Entry(formulario_crear, bg="white")
+    cantidad_crear.pack(pady=5)
+
+    # Etiqueta para precio del producto
+    precio_label = tk.Label(formulario_crear, text="Precio al mayor:", bg="black", fg="white")
+    precio_label.pack(pady=5)
+
+    # Cuadro de entrada para el precio
+    precio_crear = tk.Entry(formulario_crear, bg="white")
+    precio_crear.pack(pady=5)
+
+    # Etiqueta para la fecha de vencimiento
+    fecha_vencimiento_label = tk.Label(formulario_crear, text="Fecha de vencimiento:", bg="black", fg="white")
+    fecha_vencimiento_label.pack(pady=5)
+
+    # Cuadro de entrada de la fecha de vencimiento
+    fecha_vencimiento_crear = tk.Entry(formulario_crear, bg="white")
+    fecha_vencimiento_crear.pack(pady=5)
+
+    # Etiqueta para precio del producto
+    proveedor_label = tk.Label(formulario_crear, text="Proveedor:", bg="black", fg="white")
+    proveedor_label.pack(pady=5)
+
+    # Cuadro de entrada del precio
+    proveedor_crear = tk.Entry(formulario_crear, bg="white")
+    proveedor_crear.pack(pady=5)
+
+
+
+    def guardar_producto():
+        global conexion #definimos la variable conexion como global
+        producto = producto_crear.get()
+        categoria = categoria_entry.get()
+        cantidad = cantidad_crear.get()
+        precio_mayor=precio_crear.get()
+        fecha_vencimiento= fecha_vencimiento_crear.get()
+        proveedor = proveedor_crear.get()
+        
+        fecha_actual=datetime.date.today()
+     
+
+       
+            #creamos una sentencia para guardar los datos en la base de datos
+        try:
+            #abrir cursor
+            cursor=conexion.cursor()
+            consulta="INSERT INTO productos (descripcion_producto, cantidad_total, fecha_vencimiento, costo_mayor, id_proveedor, id_categoria) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(consulta, (producto, cantidad, fecha_vencimiento, precio_mayor, proveedor, categoria))
+
+            conexion.commit()
+            #actualizar tabla
+            datos_tabla_inventario(tabla_inventario)
+
+            cursor.close()
+            ventana_crear_producto.destroy()
+
+            messagebox.showinfo("Producto creado", 'Se ha registrado el producto correctamente')
+        except Exception as e:
+            conexion.rollback()
+            messagebox.showerror("Error", f"No se ha podido registrar el producto: {str(e)}")
+
+    # Botón de guardar producto
+    boton_guardar_producto = tk.Button(formulario_crear, text="Crear Producto", command=guardar_producto, activebackground="#F50743", font=("helvetica", 12))
+    boton_guardar_producto.pack(pady=10, ipadx=10)
+
+#creamos el formulario de proveedores
+
+def crear_proveedor():
+    # Abrir la ventana producto
+    ventana_crear_proveedor = tk.Toplevel()
+    ventana_crear_proveedor.title("crear proveedor")
+    ventana_crear_proveedor.configure(bg="white")
+   
+    # Crear un marco para el formulario de proveedor
+    formulario_crear = tk.Frame(ventana_crear_proveedor , bg="pink", padx=20, pady=20, borderwidth=2, relief="groove")
+    formulario_crear.pack(padx=20, pady=20)
+
+    titulo_label = tk.Label(formulario_crear, text="Crear Proveedor:", bg="black", fg="white")
+    titulo_label.pack(pady=10)
+
+    # Etiqueta de producto
+    proveedor_label = tk.Label(formulario_crear, text="Proveedor:", bg="black", fg="white")
+    proveedor_label.pack(pady=5)
+
+   # Cuadro de entrada de proveedor
+    proveedor_crear = tk.Entry(formulario_crear, bg="white")
+    proveedor_crear.pack(pady=5) 
+
+    # Etiqueta de categoria
+    codigo_label = tk.Label(formulario_crear, text="Rif:", bg="black", fg="white")
+    codigo_label.pack(pady=5)
+
+    # Cuadro de entrada de categoria
+    codigo_entry = tk.Entry(formulario_crear, bg="white")
+    codigo_entry.pack(pady=5)
+
+    # Etiqueta para cantidad
+    documento_label = tk.Label(formulario_crear, text="Prefijo Documento:", bg="black", fg="white")
+    documento_label.pack(pady=5)
+
+    # Cuadro de entrada de cantidad
+    documento_crear = tk.Entry(formulario_crear, bg="white")
+    documento_crear.pack(pady=5)
+
+    def guardar_proveedor():
+        global conexion #definimos la variable conexion como global
+        nombre = proveedor_crear.get()
+        codigo= codigo_entry.get()
+        prefijo_documento=documento_crear.get()
+        
+        fecha_actual=datetime.date.today()
+     
+            #creamos una sentencia para guardar los datos en la base de datos
+        try:
+            #abrir cursor
+            cursor=conexion.cursor()
+            consulta="INSERT INTO proveedor (nombre, codigo, id_prefijo_documento) VALUES (%s, %s, %s)"
+            cursor.execute(consulta, (nombre, codigo, prefijo_documento))
+
+            conexion.commit()
+            #actualizar tabla
+            datos_tabla_proveedor(tabla_proveedor)
+
+            cursor.close()
+            ventana_crear_proveedor.destroy()
+
+            messagebox.showinfo("Proveedor creado", 'Se ha registrado el proveedor correctamente')
+        except Exception as e:
+            conexion.rollback()
+            messagebox.showerror("Error", f"No se ha podido registrar el proveedor: {str(e)}")
+
+    # Botón de guardar producto
+    boton_guardar_proveedor = tk.Button(formulario_crear, text="Guardar Proveedor", command=guardar_proveedor, activebackground="#F50743", font=("helvetica", 12))
+    boton_guardar_proveedor.pack(pady=10, ipadx=10)
+
 #metodo del boton1
 def usuarios():
     etiqueta_titulo.config(text="Usuarios del sistema")
-    global tabla_usuarios, boton_guardar_usuario
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario,boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
     #si ya existe la tabla inventario/ destruir
-    global tabla_inventario
+
     if tabla_inventario and tabla_inventario.winfo_exists():
         tabla_inventario.destroy()
 
     if boton_guardar_usuario and boton_guardar_usuario.winfo_exists():
         boton_guardar_usuario.destroy()
+
+    if tabla_proveedor and tabla_proveedor.winfo_exists():
+        tabla_proveedor.destroy()
+
+    if boton_crear_proveedor and boton_crear_proveedor.winfo_exists():
+        boton_crear_proveedor.destroy()
+
+    if boton_guardar_inventario and boton_guardar_inventario.winfo_exists():
+        boton_guardar_inventario.destroy()    
+
+    if tabla_movimientos and tabla_movimientos.winfo_exists():
+        tabla_movimientos.destroy()
 
     #aplicar tema x
     estilo= ttk.Style()
@@ -169,20 +397,34 @@ def usuarios():
     boton_guardar_usuario=tk.Button(contenido,text="crear usuario", command=crear_usuario)
     boton_guardar_usuario.pack(side="left",padx=10,pady=5)
 
-#crear formulario de inventario
+
 
 #metodo del boton2
 def Inventario():
     etiqueta_titulo.config(text="Inventario General")
-#si ya existe la tabla usuarios/ destruir
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor,tabla_movimientos
+    #si ya existe la tabla usuarios/ destruir
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
-#si ya existe la tabla inventario/ destruir
-    global tabla_inventario
-    if tabla_inventario:
+    #si ya existe la tabla inventario/ destruir
+
+    if tabla_inventario and tabla_inventario.winfo_exists():
         tabla_inventario.destroy()
-    if boton_guardar_usuario: 
+
+    if boton_guardar_usuario and boton_guardar_usuario.winfo_exists():
         boton_guardar_usuario.destroy()
+
+    if tabla_proveedor and tabla_proveedor.winfo_exists():
+        tabla_proveedor.destroy()
+
+    if boton_crear_proveedor and boton_crear_proveedor.winfo_exists():
+        boton_crear_proveedor.destroy()
+
+    if boton_guardar_inventario and boton_guardar_inventario.winfo_exists():
+        boton_guardar_inventario.destroy()  
+
+    if tabla_movimientos and tabla_movimientos.winfo_exists():
+        tabla_movimientos.destroy()
     #contenido 
     contenido.config(text="Inventario de los Productos de Cinelandia")
 
@@ -207,10 +449,117 @@ def Inventario():
 
     #mostrar la tabla en el contenedor derecho
     tabla_inventario.pack(fill="both",expand=True)
+
+    #boton de crear producto
+    boton_guardar_inventario=tk.Button(contenido,text="crear producto", command=crear_producto)
+    boton_guardar_inventario.pack(side="left",padx=10,pady=5)
+
     
 #metodo del boton3
-def boton3():
-    print("fino3")
+def Proveedor():
+    etiqueta_titulo.config(text="Proveedor")
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos
+#si ya existe la tabla usuarios/ destruir
+    if tabla_usuarios and tabla_usuarios.winfo_exists():
+        tabla_usuarios.destroy()
+    #si ya existe la tabla inventario/ destruir
+
+    if tabla_inventario and tabla_inventario.winfo_exists():
+        tabla_inventario.destroy()
+
+    if boton_guardar_usuario and boton_guardar_usuario.winfo_exists():
+        boton_guardar_usuario.destroy()
+
+    if tabla_proveedor and tabla_proveedor.winfo_exists():
+        tabla_proveedor.destroy()
+
+    if boton_crear_proveedor and boton_crear_proveedor.winfo_exists():
+        boton_crear_proveedor.destroy()
+
+    if boton_guardar_inventario and boton_guardar_inventario.winfo_exists():
+        boton_guardar_inventario.destroy() 
+    
+    if tabla_movimientos and tabla_movimientos.winfo_exists():
+        tabla_movimientos.destroy()
+    #contenido 
+    contenido.config(text="Inventario de los Productos de Cinelandia")
+
+    #crear la tabla de inventario del contenedor derecho
+    tabla_proveedor = ttk.Treeview(contenido, columns=("nombre", "codigo","id_prefijo_documento"), show="headings", padding=5)
+
+    tabla_proveedor.heading("nombre", text="proveedor") 
+    tabla_proveedor.heading("codigo", text="Rif")
+    tabla_proveedor.heading("id_prefijo_documento", text="documento")
+    
+
+    #ajustar tamaño de columnas
+    tabla_proveedor.column("nombre", width=150)
+    tabla_proveedor.column("codigo", width=100)
+    tabla_proveedor.column("id_prefijo_documento",width=100)
+    
+
+    #contenido de la tabla
+    datos_tabla_proveedor(tabla_proveedor)
+
+    #mostrar la tabla en el contenedor derecho
+    tabla_proveedor.pack(fill="both",expand=True)
+
+    #boton de crear proveedor
+    boton_crear_proveedor=tk.Button(contenido,text="crear proveedor", command=crear_proveedor)
+    boton_crear_proveedor.pack(side="left",padx=10,pady=5)
+
+
+#metodo del boton4
+def Movimientos():
+    etiqueta_titulo.config(text="Movimientos")
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos
+    #si ya existe la tabla usuarios/ destruir
+    if tabla_usuarios and tabla_usuarios.winfo_exists():
+        tabla_usuarios.destroy()
+    #si ya existe la tabla inventario/ destruir
+
+    if tabla_inventario and tabla_inventario.winfo_exists():
+        tabla_inventario.destroy()
+
+    if boton_guardar_usuario and boton_guardar_usuario.winfo_exists():
+        boton_guardar_usuario.destroy()
+
+    if tabla_proveedor and tabla_proveedor.winfo_exists():
+        tabla_proveedor.destroy()
+
+    if boton_crear_proveedor and boton_crear_proveedor.winfo_exists():
+        boton_crear_proveedor.destroy()
+
+    if boton_guardar_inventario and boton_guardar_inventario.winfo_exists():
+        boton_guardar_inventario.destroy() 
+    
+    if tabla_movimientos and tabla_movimientos.winfo_exists():
+        tabla_movimientos.destroy()
+   
+    #contenido 
+    contenido.config(text="Movimientos de los Productos de Cinelandia")
+
+    #crear la tabla de inventario del contenedor derecho
+    tabla_movimientos = ttk.Treeview(contenido, columns=("id", "descripcion","status", "total"), show="headings", padding=5)
+
+    tabla_movimientos.heading("id", text="id movimientos") 
+    tabla_movimientos.heading("descripcion", text="descripcion")
+    tabla_movimientos.heading("status", text="estado")
+    tabla_movimientos.heading("total", text="total")
+
+    #ajustar tamaño de columnas
+    tabla_movimientos.column("id", width=150)
+    tabla_movimientos.column("descripcion", width=100)
+    tabla_movimientos.column("status",width=100)
+    tabla_movimientos.column("total",width=100)
+
+    #contenido de la tabla
+    datos_tabla_movimientos(tabla_movimientos)
+
+    #mostrar la tabla en el contenedor derecho
+    tabla_movimientos.pack(fill="both",expand=True)
+
+    
 
 
 # Metodo de inicio de session
@@ -267,8 +616,12 @@ def iniciar_sesion():
         opcion2.pack(pady=5)
 
         # Opción 3
-        opcion3 = tk.Button(panel_izquierdo, text="Opción 3", bg="white", padx=10, command=boton3, pady=5)
+        opcion3 = tk.Button(panel_izquierdo, text="Proveedores", bg="white", padx=10, command=Proveedor, pady=5)
         opcion3.pack(pady=5)
+
+        # Opción 4
+        opcion4 = tk.Button(panel_izquierdo, text="Movimientos", bg="white", padx=10, command=Movimientos, pady=5)
+        opcion4.pack(pady=5)
 
         # Contenedor a la derecha
         contenedor_derecho = tk.Frame(ventana_dashboard, bg="white")
@@ -324,12 +677,11 @@ password_entry.place(relx=0.4, rely=0.5, relwidth=0.5, relheight=0.2)
 
 # Botón de inicio de sesión
 boton_iniciar_sesion = tk.Button(formulario_frame, text="Iniciar sesión", command=iniciar_sesion, activebackground="#F50743")
+boton_iniciar_sesion.bind("<Return>", iniciar_sesion)
 boton_iniciar_sesion.place(relx=0.4, rely=0.8, relwidth=0.5, relheight=0.2)
-
 
 
 # Iniciar el bucle principal de la ventana
 ventana.mainloop()
 
 ventana.destroy()
-
