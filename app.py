@@ -1,5 +1,6 @@
 # Importaciones frameworks y dependencias del proyecto
 import tkinter as tk
+from customtkinter  import CTk, CTkFrame, CTkEntry, CTkLabel, CTkButton, CTkCheckBox
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
 import mysql.connector
@@ -21,9 +22,20 @@ boton_guardar_inventario=None
 
 editar_button=None
 eliminar_button=None
+vender_button=None
+comprar_button=None
 
 entrada_busqueda=None
 boton_buscar=None
+
+#Colores
+c_negro = '#010101'
+c_verde = '#2cb67d'
+c_morado = '#7f5af0'
+c_rojo = '#F50743'
+c_azul = '#3300FF'
+c_blanco = '#fff'
+c_gris = 'gray90'
 
 # Función para consultar un usuario en MySQL
 def consultar_usuario(id_usuario):
@@ -188,7 +200,7 @@ def eliminar_usuario(id_usuario):
 def cerrar_sesion(ventana_dashboard):
     #cerramos la ventana del dashboard
     ventana_dashboard.destroy()
-    ventana.destroy()
+    root.destroy()
 
 def buscar(tabla, entrada_busqueda):
     valor_busqueda = entrada_busqueda.get()
@@ -426,8 +438,8 @@ def crear_producto():
     
 #metodo del boton1
 def usuarios():
-    etiqueta_titulo.config(text="Usuarios del sistema", bg="#2c3e50", fg="white")
-    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario, editar_button, eliminar_button, entrada_busqueda, boton_buscar
+    etiqueta_titulo.config(text="Usuarios del sistema", bg="#0058ac", fg="white")
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario, editar_button, eliminar_button, entrada_busqueda, boton_buscar, vender_button, comprar_button
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
         #si ya existe la tabla inventario/ destruir
@@ -465,6 +477,12 @@ def usuarios():
     
     if boton_buscar:
         boton_buscar.destroy()
+
+    if comprar_button: 
+        comprar_button.destroy()   
+
+    if vender_button: 
+        vender_button.destroy()  
         
     #aplicar tema x
     estilo= ttk.Style()
@@ -716,7 +734,7 @@ def eliminar_producto(id_producto):
 #metodo del boton2
 def Inventario():
     etiqueta_titulo.config(text="Inventario General")
-    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor,tabla_movimientos, editar_button, eliminar_button, entrada_busqueda, boton_buscar
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor,tabla_movimientos, editar_button, eliminar_button, entrada_busqueda, boton_buscar, vender_button, comprar_button
 
     #si ya existe la tabla usuarios/ destruir
     if tabla_usuarios and tabla_usuarios.winfo_exists():
@@ -758,6 +776,12 @@ def Inventario():
     
     if boton_buscar:
         boton_buscar.destroy()
+
+    if vender_button: 
+        vender_button.destroy()   
+
+    if comprar_button: 
+        comprar_button.destroy()  
      
     #aplicar tema x
     estilo= ttk.Style()
@@ -776,7 +800,7 @@ def Inventario():
     boton_buscar = tk.Button(contenido, text="Buscar", command=lambda: buscar(tabla_inventario, entrada_busqueda))
     boton_buscar.pack(side=tk.TOP)
 
-    tabla_inventario.heading("#", text="ID") 
+    tabla_inventario.heading("#", text="#") 
     tabla_inventario.heading("descripcion_producto", text="producto") 
     tabla_inventario.heading("cantidad_total", text="cantidad")
     tabla_inventario.heading("fecha_vencimiento", text="fecha de vencimiento")
@@ -807,6 +831,10 @@ def Inventario():
     editar_button = tk.Button(contenido, text="Editar", command=lambda: editar_producto(id_producto))
     eliminar_button = tk.Button(contenido, text="Eliminar", command=lambda: eliminar_producto(id_producto))
 
+    # Botones vender y comprar (ocultos inicialmente)
+    vender_button = tk.Button(contenido, text="Vender", command=lambda: vender_producto(id_producto))
+    comprar_button = tk.Button(contenido, text="Comprar", command=lambda: comprar_producto(id_producto))
+    
     # Configurar la acción de selección de inventario
     def seleccionar_producto(event):
         item_seleccionado = tabla_inventario.selection()
@@ -814,11 +842,18 @@ def Inventario():
             id_producto = tabla_inventario.item(item_seleccionado, "values")[0]
             editar_button.configure(command=lambda: editar_producto(id_producto))
             eliminar_button.configure(command=lambda: eliminar_producto(id_producto))
+            vender_button.configure(command=lambda: vender_producto(id_producto))
+            comprar_button.configure(command=lambda: comprar_producto(id_producto))
             editar_button.pack(side="left", padx=10, pady=5)
             eliminar_button.pack(side="left", padx=10, pady=5)
+            vender_button.pack(side="left", padx=10, pady=5)
+            comprar_button.pack(side="left", padx=10, pady=5)
+
         else:
             editar_button.pack_forget()
             eliminar_button.pack_forget()
+            vender_button.pack_forget()
+            comprar_button.pack_forget()
 
     tabla_inventario.bind("<<TreeviewSelect>>", seleccionar_producto)
 
@@ -1055,7 +1090,7 @@ def eliminar_proveedor(id_proveedor):
 #metodo del boton3
 def Proveedor():
     etiqueta_titulo.config(text="Proveedor")
-    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos, editar_button, eliminar_button, entrada_busqueda, boton_buscar
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos, editar_button, eliminar_button, entrada_busqueda, boton_buscar, vender_button, comprar_button
     #si ya existe la tabla usuarios/ destruir
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
@@ -1093,6 +1128,13 @@ def Proveedor():
     
     if boton_buscar:
         boton_buscar.destroy()
+
+    if vender_button: 
+        vender_button.destroy()   
+
+    if comprar_button: 
+        comprar_button.destroy()  
+     
         
     #aplicar tema x
     estilo= ttk.Style()
@@ -1100,7 +1142,7 @@ def Proveedor():
     estilo.configure("Custom.Treeview", font=("Arial", 10), background="#ececec", fieldbackground="#ececec")  
    
     #contenido 
-    contenido.config(text="Inventario de los Productos de Cinelandia")
+    contenido.config(text="Proveedores de Cinelandia")
 
     #crear la tabla de inventario del contenedor derecho
     tabla_proveedor = ttk.Treeview(contenido, columns=("#", "nombre", "codigo","id_prefijo_documento"), show="headings", style="Custom.Treeview")
@@ -1111,7 +1153,7 @@ def Proveedor():
     boton_buscar = tk.Button(contenido, text="Buscar", command=lambda: buscar(tabla_proveedor, entrada_busqueda))
     boton_buscar.pack(side=tk.TOP)
 
-    tabla_proveedor.heading("#", text="ID") 
+    tabla_proveedor.heading("#", text="#") 
     tabla_proveedor.heading("nombre", text="Proveedor") 
     tabla_proveedor.heading("codigo", text="Rif")
     tabla_proveedor.heading("id_prefijo_documento", text="Documento")
@@ -1153,12 +1195,10 @@ def Proveedor():
 
     tabla_proveedor.bind("<<TreeviewSelect>>", seleccionar_proveedor)
 
-
-
 #metodo del boton4
 def Movimientos():
     etiqueta_titulo.config(text="Movimientos")
-    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos, editar_button, eliminar_button, entrada_busqueda, boton_buscar
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos, editar_button, eliminar_button, entrada_busqueda, boton_buscar, vender_button, comprar_button
     #si ya existe la tabla usuarios/ destruir
     if tabla_usuarios and tabla_usuarios.winfo_exists():
         tabla_usuarios.destroy()
@@ -1197,13 +1237,19 @@ def Movimientos():
     if boton_buscar:
         boton_buscar.destroy()
 
+    if vender_button: 
+        vender_button.destroy()   
+
+    if comprar_button: 
+        comprar_button.destroy()  
+
     #aplicar tema x
     estilo= ttk.Style()
     estilo.configure("Custom.Treeview.Heading", font=("Arial", 12, "bold"))
     estilo.configure("Custom.Treeview", font=("Arial", 10), background="#ececec", fieldbackground="#ececec")      
    
     #contenido 
-    contenido.config(text="Movimientos de los Productos de Cinelandia")
+    contenido.config(text="Movimientos del sistema")
 
     #crear la tabla de inventario del contenedor derecho
     tabla_movimientos = ttk.Treeview(contenido, columns=("id", "descripcion","status", "total"), show="headings", style="Custom.Treeview")
@@ -1225,6 +1271,55 @@ def Movimientos():
     #mostrar la tabla en el contenedor derecho
     tabla_movimientos.pack(fill="both",expand=True)
 
+def inicio():
+    etiqueta_titulo.config(text="Inicio")
+    global tabla_usuarios, boton_guardar_usuario, tabla_inventario, boton_guardar_inventario,tabla_proveedor,boton_crear_proveedor, tabla_movimientos, editar_button, eliminar_button, entrada_busqueda, boton_buscar, vender_button, comprar_button
+    #si ya existe la tabla usuarios/ destruir
+    if tabla_usuarios and tabla_usuarios.winfo_exists():
+        tabla_usuarios.destroy()
+    #si ya existe la tabla inventario/ destruir
+
+    if tabla_inventario and tabla_inventario.winfo_exists():
+        tabla_inventario.destroy()
+
+    if boton_guardar_usuario and boton_guardar_usuario.winfo_exists():
+        boton_guardar_usuario.destroy()
+
+    if tabla_proveedor and tabla_proveedor.winfo_exists():
+        tabla_proveedor.destroy()
+
+    if boton_crear_proveedor and boton_crear_proveedor.winfo_exists():
+        boton_crear_proveedor.destroy()
+
+    if boton_guardar_inventario and boton_guardar_inventario.winfo_exists():
+        boton_guardar_inventario.destroy() 
+    
+    if tabla_movimientos and tabla_movimientos.winfo_exists():
+        tabla_movimientos.destroy()
+    
+    if boton_guardar_inventario: 
+        boton_guardar_inventario.destroy()
+
+    if editar_button: 
+        editar_button.destroy()   
+
+    if eliminar_button: 
+        eliminar_button.destroy()     
+
+    if entrada_busqueda:
+        entrada_busqueda.destroy()
+    
+    if boton_buscar:
+        boton_buscar.destroy()
+
+    if vender_button: 
+        vender_button.destroy()   
+
+    if comprar_button: 
+        comprar_button.destroy() 
+
+    #contenido 
+    contenido.config(text="Aquí va el contenido del menú seleccionado")
 # Metodo de inicio de session
 def iniciar_sesion():
     global conexion #definimos la variable conexion como global
@@ -1246,86 +1341,94 @@ def iniciar_sesion():
     # Verificar las credenciales de inicio de sesión
     if resultado is not None: 
         messagebox.showinfo("Inicio de sesión exitoso", f"Bienvenido, {usuario}!")
-        ventana.withdraw()  # Ocultar la ventana de inicio de sesión
+        root.withdraw()  # Ocultar la ventana de inicio de sesión
 
         # Obtener el ancho y alto de la pantalla
-        ancho_pantalla = ventana.winfo_screenwidth()
-        alto_pantalla = ventana.winfo_screenheight()
+        ancho_pantalla = root.winfo_screenwidth()
+        alto_pantalla = root.winfo_screenheight()
 
-        # Abrir la ventana del panel
-        ventana_dashboard = tk.Toplevel()
-        ventana_dashboard.title("Panel")
-        ventana_dashboard.configure(bg="#1b2838")
-
-        # Establecer el tamaño y posición de la ventana
-        ventana_dashboard.geometry(f"{ancho_pantalla}x{alto_pantalla}+0+0")
+        ventana_dashboard = CTk() 
+        ventana_dashboard.geometry("900x600+350+20")
+        ventana_dashboard.minsize(480, 500)
+        ventana_dashboard.config(bg = c_negro)
+        ventana_dashboard.title("CINELANDIA")
 
         # Panel vertical izquierdo (Menú)
-        panel_izquierdo = tk.Frame(ventana_dashboard, bg="#2c3e50",  width=300)
+        panel_izquierdo = tk.Frame(ventana_dashboard, bg=c_negro,  width=300)
         panel_izquierdo.pack(side="left", fill="y")
 
         # Elementos del menú
-        etiqueta_menu = tk.Label(panel_izquierdo, text="Menú", bg="light gray", font=("Arial", 16, "bold"))
+        etiqueta_menu = tk.Label(panel_izquierdo, text="Menú", bg=c_verde, fg="white", font=("Arial", 20, "bold"))
         etiqueta_menu.pack(pady=10)
 
+        # Opción 0
+        opcion0 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
+	    hover_color=c_rojo,corner_radius=12,border_width=2,
+        text='Inicio', command=inicio)
+        opcion0.pack(pady=5)
+
         # Opción 1
-        opcion1 = tk.Button(panel_izquierdo, text="Usuarios", bg="#2c3e50", fg="white", padx=10, pady=5, command=usuarios, relief="flat")
+        opcion1 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
+	    hover_color=c_rojo,corner_radius=12,border_width=2,
+        text='Usuarios', command=usuarios)
         opcion1.pack(pady=5)
-        opcion1.config(cursor="hand2")  # Cambia el cursor a una mano (pointer)
 
         # Opción 2
-        opcion2 = tk.Button(panel_izquierdo, text="Inventario", bg="#2c3e50", fg="white", padx=10, pady=5, command=Inventario, relief="flat")
+        opcion2 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
+	    hover_color=c_rojo,corner_radius=12,border_width=2,
+        text='Inventario', command=Inventario)
         opcion2.pack(pady=5)
-        opcion2.config(cursor="hand2")  # Cambia el cursor a una mano (pointer)
 
         # Opción 3
-        opcion3 = tk.Button(panel_izquierdo, text="Proveedores", bg="#2c3e50", fg="white", padx=10, pady=5, command=Proveedor, relief="flat")
+        opcion3 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
+	    hover_color=c_rojo,corner_radius=12,border_width=2,
+        text='Proveedores', command=Proveedor)
         opcion3.pack(pady=5)
-        opcion3.config(cursor="hand2")  # Cambia el cursor a una mano (pointer)
 
         # Opción 4
-        opcion4 = tk.Button(panel_izquierdo, text="Movimientos", bg="#2c3e50", fg="white", padx=10, pady=5, command=Movimientos, relief="flat")
+        opcion4 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
+	    hover_color=c_rojo,corner_radius=12,border_width=2,
+        text='Movimientos', command=Movimientos)
         opcion4.pack(pady=5)
-        opcion4.config(cursor="hand2")  # Cambia el cursor a una mano (pointer)
 
         # Agregar recuadro inferior
-        recuadro_inferior = tk.Frame(panel_izquierdo, bg="#2c3e50", bd=1, relief="solid")
+        recuadro_inferior = tk.Frame(panel_izquierdo, bg=c_verde, relief="solid")
         recuadro_inferior.pack(side="bottom", fill="x")
 
         # Puedes reemplazar 'ruta_imagen.png' con la ruta de tu imagen
-        imagen = tk.PhotoImage(file="imagenes/user.png")
-        imagen = redimensionar_imagen(imagen, 50, 50),
-        imagen_label = tk.Label(recuadro_inferior, image=imagen, bg="#2c3e50")
-        imagen_label.image = imagen
-        imagen_label.pack(side="top", padx=10)
+        #imagen = tk.PhotoImage(file="imagenes/user.png")
+        #imagen = redimensionar_imagen(imagen, 50, 50),
+        #imagen_label = tk.Label(recuadro_inferior, image=imagen, bg="#3300FF")
+        #imagen_label.image = imagen
+        #imagen_label.pack(side="top", padx=10)
 
         # Agregar icono de configuración
-        icono_configuracion = tk.PhotoImage(file='imagenes/settings.png')
-        icono_configuracion = redimensionar_imagen(icono_configuracion, 25, 25)
-        icono_label = tk.Label(recuadro_inferior, image=icono_configuracion, bg="#2c3e50")
-        icono_label.image = icono_configuracion
-        icono_label.pack(side="right", padx=10)
+        #icono_configuracion = tk.PhotoImage(file='imagenes/settings.png')
+        #icono_configuracion = redimensionar_imagen(icono_configuracion, 25, 25)
+        #icono_label = tk.Label(recuadro_inferior, image=icono_configuracion, bg="#3300FF")
+        #icono_label.image = icono_configuracion
+        #icono_label.pack(side="right", padx=10)
 
         # Agregar rol
-        rol_label = tk.Label(recuadro_inferior, text="Username: Admin", bg="#2c3e50", fg="white")
+        rol_label = tk.Label(recuadro_inferior, text="Username: Admin", bg=c_verde, fg="white", font=("Arial", 14))
         rol_label.pack(padx=10)
 
-        username = tk.Label(recuadro_inferior, text="Rol: Administrador", bg="#2c3e50", fg="white")
+        username = tk.Label(recuadro_inferior, text="Rol: Administrador", bg=c_verde, fg="white", font=("Arial", 14))
         username.pack(padx=10)
 
         # Contenedor a la derecha
-        contenedor_derecho = tk.Frame(ventana_dashboard, bg="#1b2838")
+        contenedor_derecho = tk.Frame(ventana_dashboard, bg="#0058ac")
         contenedor_derecho.pack(side="right", fill="both", expand=True)
 
         # Contenedor resaltado
-        contenedor_resaltado = tk.Frame(contenedor_derecho, bg="#2c3e50", padx=20, pady=20)
+        contenedor_resaltado = tk.Frame(contenedor_derecho, bg="#0058ac", padx=10, pady=20)
         contenedor_resaltado.pack(pady=10)
 
         #elementos del contenedor derecho
         global etiqueta_titulo, contenido
 
         # Agregar elementos al contenedor resaltado
-        etiqueta_titulo = tk.Label(contenedor_resaltado, text="Contenido", bg="white", font=("Arial", 16, "bold"))
+        etiqueta_titulo = tk.Label(contenedor_resaltado, text="Inicio", bg="white", font=("Arial", 16, "bold"))
         etiqueta_titulo.pack(pady=10)
 
         contenido = tk.Label(contenedor_resaltado, text="Aquí va el contenido del menú seleccionado", bg="white")
@@ -1344,117 +1447,57 @@ def iniciar_sesion():
 def on_enter(event):
     iniciar_sesion()
 
-# Función para cambiar la imagen en el carrusel
-def cambiar_imagen(index):
-    global imagen_actual
-    imagen_actual = index
-    imagen = imagenes[imagen_actual]
-    imagen_carrusel.configure(image=imagen)
-    imagen_carrusel.image = imagen
-
-# Función para avanzar automáticamente el carrusel
-def avanzar_carrusel():
-    global imagen_actual
-    # Calcula el índice de la siguiente imagen
-    siguiente_indice = (imagen_actual + 1) % len(imagenes)
-    cambiar_imagen(siguiente_indice)
-    ventana.after(3000, avanzar_carrusel)  # Cambia la imagen cada 3000 milisegundos (3 segundos)
-
 # Función para redimensionar una imagen
 def redimensionar_imagen(imagen, ancho, alto):
     return imagen.subsample(int(imagen.width() / ancho), int(imagen.height() / alto))
 
-# Ventana principal
-ventana = tk.Tk()
-ventana.title("Sistema de Inventario")
-ventana.geometry("800x400")
-ventana.configure(bg="#1b2838")  # Cambia el color de fondo de la ventana
+root = CTk() 
+root.geometry("500x600+350+20")
+root.minsize(480, 500)
+root.config(bg = c_negro)
+root.title("Iniciar Sesion")
 
+frame = CTkFrame(root, fg_color= c_negro)
+frame.grid(column=0, row = 0, sticky='nsew',padx=50, pady=50)
 
-# Marco principal para la disposición
-marco_principal = tk.Frame(ventana, bg="#1b2838")
-marco_principal.place(relx=0, rely=0, relwidth=1, relheight=1)
+frame.columnconfigure([0,1], weight=1)
+frame.rowconfigure([0,1,2,3,4,5], weight=1)
 
-# Título
-titulo_marco = tk.Label(marco_principal, text="Sistema inventario Cinelandia", bg="#2c3e50", fg="white", font=("Helvetica", 16, "bold"))
-titulo_marco.place(relx=0.55, rely=0.05, relwidth=0.4, relheight=0.1)  # Ajusta el valor de relx para mover el título a la izquierda
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
 
-# Marco para el carrusel de imágenes a la izquierda
-carrusel_marco = tk.Frame(marco_principal, bg="#1b2838")
-carrusel_marco.place(relx=0, rely=0, relwidth=0.55, relheight=0.95)
+logo = tk.PhotoImage(file='imagenes/user.png') 
+img_google = tk.PhotoImage(file='imagenes/user.png')
+img_facebook = tk.PhotoImage(file='imagenes/user.png')
 
-# Cargar las imágenes
-imagen1 = tk.PhotoImage(file="imagenes/img.png")
-imagen2 = tk.PhotoImage(file="imagenes/img2.png")
-imagen3 = tk.PhotoImage(file="imagenes/img.png")
-img_user = tk.PhotoImage(file="imagenes/user.png")
+imagen_central = redimensionar_imagen(logo, 225, 225),
 
-ancho_deseado = 240  # Especifica el ancho deseado para las imágenes
-alto_deseado = 280   # Especifica el alto deseado para las imágenes
+imagen_label = tk.Label(frame, image=imagen_central, bg=c_negro).grid(columnspan=2, row=0)
 
-# Lista de imágenes para el carrusel
-imagenes = [
-    redimensionar_imagen(imagen1, ancho_deseado, alto_deseado),
-    redimensionar_imagen(imagen2, ancho_deseado, alto_deseado),
-    redimensionar_imagen(imagen3, ancho_deseado, alto_deseado)
-]
+usuario_entry = CTkEntry(frame, placeholder_text= 'Usuario', 
+	border_color=c_verde, fg_color= c_blanco, width =220,height=40)
+usuario_entry.grid(columnspan=2, row=1,padx=4, pady =4)
 
-# Variable para rastrear la imagen actual en el carrusel
-imagen_actual = 0
+password_entry = CTkEntry(frame,show="*", placeholder_text= 'Contraseña',
+ border_color= c_verde, fg_color= c_blanco, width =220,height=40)
+password_entry.grid(columnspan=2, row=2,padx=4, pady =4)
 
-# Etiqueta para el carrusel
-imagen_carrusel = tk.Label(carrusel_marco, image=imagenes[0], bg="#1b2838")
-imagen_carrusel.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
+checkbox = CTkCheckBox(frame, text="Recordarme",hover_color= c_rojo, 
+	border_color=c_verde, fg_color=c_verde)
+checkbox.grid(columnspan=2, row=3,padx=4, pady =4)
 
-# Indicadores de imágenes (puntos)
-indicadores = []
-for i in range(len(imagenes)):
-    indicador = tk.Label(carrusel_marco, text="●", font=("Helvetica", 14), bg="#1b2838", fg="white", activebackground="#F50743")
-    indicador.bind("<Button-1>", lambda event, index=i: cambiar_imagen(index))
-    indicadores.append(indicador)
-    indicador.place(relx=0.43 + i * 0.05, rely=0.80)
-
-# Marco para el formulario a la derecha con borde
-formulario_frame = tk.Frame(marco_principal, bg="#2c3e50", bd=5)
-formulario_frame.place(relx=0.55, rely=0.25, relwidth=0.4, relheight=0.5)
-
-# Título del formulario
-titulo_label = tk.Label(formulario_frame, text="Iniciar Sesión", bg="#2c3e50", fg="white", font=("Helvetica", 16, "bold"))
-titulo_label.place(relx=0.1, rely=0.05, relwidth=0.8, relheight=0.1)
-
-# Imagen centrada
-# Reemplaza "imagen_central.png" con la ruta de tu imagen
-imagen_central = redimensionar_imagen(img_user, 50, 50),
-imagen_label = tk.Label(formulario_frame, image=imagen_central, bg="#2c3e50")
-imagen_label.place(relx=0.25, rely=0.2, relwidth=0.5, relheight=0.3)
-
-# Etiqueta de usuario
-usuario_label = tk.Label(formulario_frame, text="Usuario:", bg="#2c3e50", fg="white")
-usuario_label.place(relx=0.1, rely=0.6, relwidth=0.3, relheight=0.1)
-
-# Cuadro de entrada de usuario
-usuario_entry = tk.Entry(formulario_frame, bg="white")
-usuario_entry.place(relx=0.4, rely=0.6, relwidth=0.5, relheight=0.1)
-
-# Etiqueta de contraseña
-password_label = tk.Label(formulario_frame, text="Contraseña:", bg="#2c3e50", fg="white")
-password_label.place(relx=0.1, rely=0.7, relwidth=0.3, relheight=0.1)
-
-# Cuadro de entrada de contraseña
-password_entry = tk.Entry(formulario_frame, show="*", bg="white")
-password_entry.place(relx=0.4, rely=0.7, relwidth=0.5, relheight=0.1)
-
-# Botón de inicio de sesión
-boton_iniciar_sesion = tk.Button(formulario_frame, text="Iniciar sesión", command=iniciar_sesion, bg="#1b2838", fg="white", activebackground="#F50743")
-boton_iniciar_sesion.place(relx=0.4, rely=0.85, relwidth=0.5, relheight=0.1)
+bt_iniciar = CTkButton(frame, border_color=c_verde, fg_color = c_negro,
+	hover_color=c_rojo,corner_radius=12,border_width=2,
+    text='INICIAR SESIÓN', command=iniciar_sesion)
+bt_iniciar.grid(columnspan=2, row=4,padx=4, pady =4)
 
 # Configura el evento Enter en la ventana principal
-ventana.bind("<Return>", on_enter)
+root.bind("<Return>", on_enter)
 
 # Inicia el carrusel automático
-avanzar_carrusel()
+#avanzar_carrusel()
 
-# Ejecutar la aplicación
-ventana.mainloop()
+root.call('wm', 'iconphoto', root._w, logo)
+root.mainloop()
 
-ventana.destroy()
+root.destroy()
