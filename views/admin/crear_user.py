@@ -1,4 +1,7 @@
-def crear_usuario():
+import tkinter as tk
+from app.admin.usuarios import guardar_usuario, obtener_roles
+
+def crear_usuario(tabla_usuarios):
     # Abrir la ventana usuario
     ventana_crear_usuario = tk.Toplevel()
     ventana_crear_usuario.title("crear usuario")
@@ -34,46 +37,30 @@ def crear_usuario():
     password_crear_confirmar = tk.Entry(formulario_crear, show="*", bg="white")
     password_crear_confirmar.pack(pady=5)
 
-    # Etiqueta para rol del usuario
+     # Etiqueta de usuario
+    ci_label = tk.Label(formulario_crear, text="Usuario:", bg="black", fg="white")
+    ci_label.pack(pady=5)
+
+   # Cuadro de entrada de usuario
+    ci = tk.Entry(formulario_crear, bg="white")
+    ci.pack(pady=5) 
+    
+    # Etiqueta para seleccionar rol del usuario
     rol_label = tk.Label(formulario_crear, text="Rol del Usuario:", bg="black", fg="white")
     rol_label.pack(pady=5)
 
-    # Cuadro de entrada de rol del usuario
-    rol_entry = tk.Entry(formulario_crear, bg="white")
-    rol_entry.pack(pady=5)
+    # Obtener los roles desde la base de datos
+    roles = obtener_roles()
 
-    def guardar_usuario():
-        global conexion #definimos la variable conexion como global
-        ci="123"
-        usuario = usuario_crear.get()
-        contrasena = password_entry.get()
-        confirmar_contrasena= password_crear_confirmar.get()
-        rol=rol_entry.get()
-        correo="123"
-        fecha_actual=datetime.date.today()
+    # Variable para almacenar el rol seleccionado (se guardará el id_cargo)
+    selected_role = tk.StringVar()
 
-        if (contrasena==confirmar_contrasena):
-             #creamos una sentencia para guardar los datos en la base de datos
-            try:
-                #abrir cursor
-                cursor=conexion.cursor()
-                consulta="INSERT INTO usuario (ci_usuario, usuario, contraseña, correo, fecha_ingreso, id_cargo) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(consulta, (ci, usuario, contrasena, correo, fecha_actual, rol))
+    # Crear una lista de opciones para el menú desplegable
+    opciones_roles = [rol[1] for rol in roles]
 
-                conexion.commit()
-                #actualizar tabla
-                datos_tabla_usuarios(tabla_usuarios)
-
-                cursor.close()
-                ventana_crear_usuario.destroy()
-
-                messagebox.showinfo("Usuario creado", 'Se ha registrado el usuario correctamente')
-            except Exception as e:
-                conexion.rollback()
-                messagebox.showerror("Error", f"No se ha podido registrar el usuario: {str(e)}")
-
-        else: messagebox.showerror("Error al registrar", "Las contrasenas no coinciden, vuelva a intentarlo")
-
+    # Menú desplegable de roles
+    rol_option_menu = tk.OptionMenu(formulario_crear, selected_role, *opciones_roles)
+    rol_option_menu.pack(pady=5)
     # Botón de guardar usuario
-    boton_guardar_usuario = tk.Button(formulario_crear, text="Crear Usuario", command=guardar_usuario, activebackground="#F50743", font=("helvetica", 12))
+    boton_guardar_usuario = tk.Button(formulario_crear, text="Crear Usuario", command=lambda: guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci, selected_role, ventana_crear_usuario, tabla_usuarios), activebackground="#F50743", font=("helvetica", 12))
     boton_guardar_usuario.pack(pady=10, ipadx=10)

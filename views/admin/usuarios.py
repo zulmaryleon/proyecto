@@ -1,8 +1,9 @@
 # Importa las funciones para obtener ventas y compras
 import tkinter as tk
 from tkinter import messagebox, ttk
-from app.admin.usuarios import consultar_usuario, datos_tabla_usuarios, crear_usuario
+from app.admin.usuarios import consultar_usuario, datos_tabla_usuarios
 from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris
+from views.admin.crear_user import crear_usuario
 
 def usuarios(contenedor_derecho):
 	# Limpia el contenido anterior
@@ -49,7 +50,7 @@ def usuarios(contenedor_derecho):
     tabla_usuarios.pack(fill="both", expand=True)
 
     # Botón de crear usuario
-    boton_guardar_usuario = tk.Button(frame_principal, text="Crear Usuario", command=crear_usuario)
+    boton_guardar_usuario = tk.Button(frame_principal, text="Crear Usuario", command=lambda: crear_usuario(tabla_usuarios))
     boton_guardar_usuario.pack(side="left", padx=10, pady=5)
 
     # Botones Editar y Eliminar (ocultos inicialmente)

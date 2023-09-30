@@ -1,12 +1,13 @@
 # Importa las funciones para obtener ventas y compras
 import tkinter as tk
 from tkinter import messagebox, ttk
-from app.admin.proveedor import consultar_proveedor, datos_tabla_proveedor, crear_proveedor
+from app.admin.proveedor import consultar_proveedor, datos_tabla_proveedor
 from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris
+from views.admin.crear_proveedor import crear_proveedor
 
 #metodo del boton3
 def proveedor(contenedor_derecho):
-   # Limpia el contenido anterior
+    # Limpia el contenido anterior
     for widget in contenedor_derecho.winfo_children():
         widget.destroy()
    
@@ -52,7 +53,7 @@ def proveedor(contenedor_derecho):
     tabla_proveedor.pack(fill="both",expand=True)
 
     #boton de crear proveedor
-    boton_crear_proveedor=tk.Button(frame_principal,text="crear proveedor", command=crear_proveedor)
+    boton_crear_proveedor=tk.Button(frame_principal,text="crear proveedor", command=lambda: crear_proveedor(tabla_proveedor))
     boton_crear_proveedor.pack(side="left",padx=10,pady=5)
     
     # Botones Editar y Eliminar (ocultos inicialmente)

@@ -1,11 +1,26 @@
 from tkinter import messagebox
 from app.database import get_database_connection
+import datetime, time
 
 # Función para consultar un usuario en MySQL
 conexion = get_database_connection()
 
+#Funcion de la data de usuario
+def datos_tabla_usuarios(tabla):
+    #conexion global
+
+    #eliminamos todos lo elementos antes de actualizar
+    tabla.delete(*tabla.get_children())
+
+    cursor = conexion.cursor()
+    cursor.execute("select id_usuario, usuario, fecha_ingreso, id_cargo from usuario")
+    resultado= cursor.fetchall()
+    for id_usuario, usuario, fecha_ingreso, id_cargo in resultado:
+
+        #insercion de datos
+        tabla.insert("", "end", values=(id_usuario, usuario, id_cargo, fecha_ingreso))   
+
 def consultar_usuario(id_usuario):
-    global conexion #definimos la variable conexion como global
     cursor = conexion.cursor(dictionary=True)  # Utiliza dictionary=True para obtener un diccionario
     # Consultar el usuario por ID
     try:
@@ -23,7 +38,6 @@ def consultar_usuario(id_usuario):
 
 
 def editar_usuario():
-    global conexion #definimos la variable conexion como global
     usuario = usuario_editar.get()
     correo = correo_entry.get()
     rol= rol_entry.get()
@@ -58,7 +72,7 @@ def eliminar_usuario(id_usuario):
     print(f"Eliminar usuario con ID: {id_usuario}")
     global conexion #definimos la variable conexion como global
     try:
-         # Crear un cursor
+        # Crear un cursor
         cursor = conexion.cursor()
 
         # Consulta para obtener información del usuario
@@ -108,94 +122,95 @@ def eliminar_usuario(id_usuario):
         conexion.rollback()
         messagebox.showerror("Error", f"No se ha podido editar el usuario: {str(e)}")  
 
-#Funcion de la data de usuario
-def datos_tabla_usuarios(tabla):
-    #conexion global
-    global conexion
+def obtener_id_de_descripcion(descripcion):
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
 
-    #eliminamos todos lo elementos antes de actualizar
-    tabla.delete(*tabla.get_children())
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
 
-    cursor = conexion.cursor()
-    cursor.execute("select id_usuario, usuario, fecha_ingreso, id_cargo from usuario")
-    resultado= cursor.fetchall()
-    for id_usuario, usuario, fecha_ingreso, id_cargo in resultado:
+        # Abrir cursor
+        cursor = conexion.cursor()
 
-        #insercion de datos
-        tabla.insert("", "end", values=(id_usuario, usuario, id_cargo, fecha_ingreso))   
+        # Consulta SQL para obtener el ID de un cargo basado en la descripción
+        consulta = "SELECT id_cargo FROM cargo WHERE descripcion_cargo = %s"
+        cursor.execute(consulta, (descripcion,))
 
-def crear_usuario():
-    # Abrir la ventana usuario
-    ventana_crear_usuario = tk.Toplevel()
-    ventana_crear_usuario.title("crear usuario")
-    ventana_crear_usuario.configure(bg="white")
-   
-    # Crear un marco para el formulario
-    formulario_crear = tk.Frame(ventana_crear_usuario , bg="#1b2838", padx=20, pady=20, borderwidth=2, relief="groove")
-    formulario_crear.pack(padx=20, pady=20)
+        # Obtener el resultado
+        resultado = cursor.fetchone()
 
-    titulo_label = tk.Label(formulario_crear, text="Crear Usuario:", bg="#1b2838", fg="white")
-    titulo_label.pack(pady=10)
-    # Etiqueta de usuario
-    usuario_label = tk.Label(formulario_crear, text="Usuario:", bg="black", fg="white")
-    usuario_label.pack(pady=5)
+        if resultado:
+            id_cargo = resultado[0]
+            return id_cargo
+        else:
+            return None  # Devolver None si no se encuentra la descripción
 
-   # Cuadro de entrada de usuario
-    usuario_crear = tk.Entry(formulario_crear, bg="white")
-    usuario_crear.pack(pady=5) 
+    except Exception as e:
+        print(f"Error al obtener ID de descripción: {str(e)}")
+        return None
+    finally:
+        if conexion.is_connected():
+            cursor.close()
+            conexion.close()
 
-    # Etiqueta de contraseña
-    password_label = tk.Label(formulario_crear, text="Contraseña:", bg="black", fg="white")
-    password_label.pack(pady=5)
+def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci, selected_role, ventana_crear_usuario, tabla_usuarios):
+    global conexion  # Indicar que estás utilizando la variable global
 
-    # Cuadro de entrada de contraseña
-    password_entry = tk.Entry(formulario_crear, show="*", bg="white")
-    password_entry.pack(pady=5)
+    ci_valor = ci.get()
+    usuario = usuario_crear.get()
+    contrasena = password_entry.get()
+    confirmar_contrasena = password_crear_confirmar.get()
+    rol = obtener_id_de_descripcion(selected_role.get())  # Función que obtiene la ID basada en la descripción
+    fecha_actual = datetime.date.today()
+    print(f"Eliminar usuario con ID cargo: {selected_role.get()}")
+    print(f"Eliminar usuario con ID cargo: {rol}")
 
-    # Etiqueta para confirmar contraseña
-    password_label = tk.Label(formulario_crear, text="confirmar Contraseña:", bg="black", fg="white")
-    password_label.pack(pady=5)
+    if contrasena == confirmar_contrasena:
+        try:
+            if not conexion.is_connected():
+                conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+           
+            # Abrir cursor
+            cursor = conexion.cursor()
+            consulta = "INSERT INTO usuario (ci_usuario, usuario, contraseña, fecha_ingreso, id_cargo) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(consulta, (ci_valor, usuario, contrasena, fecha_actual, rol))
 
-    # Cuadro de entrada de contraseña para confirmar
-    password_crear_confirmar = tk.Entry(formulario_crear, show="*", bg="white")
-    password_crear_confirmar.pack(pady=5)
+            conexion.commit()
+            # Actualizar tabla
+            datos_tabla_usuarios(tabla_usuarios)
 
-    # Etiqueta para rol del usuario
-    rol_label = tk.Label(formulario_crear, text="Rol del Usuario:", bg="black", fg="white")
-    rol_label.pack(pady=5)
+            cursor.close()
+            ventana_crear_usuario.destroy()
+            messagebox.showinfo("Usuario creado", 'Se ha registrado el usuario correctamente')
 
-    # Cuadro de entrada de rol del usuario
-    rol_entry = tk.Entry(formulario_crear, bg="white")
-    rol_entry.pack(pady=5)
+        except Exception as e:
+            conexion.rollback()
+            messagebox.showerror("Error", f"No se ha podido registrar el usuario: {str(e)}")
+    else:
+        messagebox.showerror("Error al registrar", "Las contraseñas no coinciden, vuelva a intentarlo")
 
-def guardar_usuario():
-        global conexion #definimos la variable conexion como global
-        ci="123"
-        usuario = usuario_crear.get()
-        contrasena = password_entry.get()
-        confirmar_contrasena= password_crear_confirmar.get()
-        rol=rol_entry.get()
-        correo="123"
-        fecha_actual=datetime.date.today()
+# Función para obtener los roles desde la base de datos (debes implementarla)
+def obtener_roles():
+    roles = []
+    try:
+        # Crea un cursor
+        cursor = conexion.cursor()
 
-        if (contrasena==confirmar_contrasena):
-             #creamos una sentencia para guardar los datos en la base de datos
-            try:
-                #abrir cursor
-                cursor=conexion.cursor()
-                consulta="INSERT INTO usuario (ci_usuario, usuario, contraseña, correo, fecha_ingreso, id_cargo) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(consulta, (ci, usuario, contrasena, correo, fecha_actual, rol))
+        # Ejecuta una consulta SQL para obtener los roles
+        cursor.execute("SELECT id_cargo, descripcion_cargo FROM cargo")
 
-                conexion.commit()
-                #actualizar tabla
-                datos_tabla_usuarios(tabla_usuarios)
+        # Obtiene todos los resultados de la consulta
+        roles = cursor.fetchall()
 
-                cursor.close()
-                ventana_crear_usuario.destroy()
 
-                messagebox.showinfo("Usuario creado", 'Se ha registrado el usuario correctamente')
-            except Exception as e:
-                conexion.rollback()
-                messagebox.showerror("Error", f"No se ha podido registrar el usuario: {str(e)}")
+    except Exception as e:
+        print(f"Error al obtener los roles desde la base de datos: {str(e)}")
 
-        else: messagebox.showerror("Error al registrar", "Las contrasenas no coinciden, vuelva a intentarlo")
+    finally:
+        # Cierra el cursor y la conexión
+        if cursor:
+            cursor.close()
+        if conexion.is_connected():
+            conexion.close()
+
+    return roles

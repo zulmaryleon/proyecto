@@ -6,6 +6,7 @@ c_rojo = '#F50743'
 c_azul = '#3300FF'
 c_blanco = '#fff'
 c_gris = 'gray90'
+c_azul_e  = '#1b2838'
 
 # Función para cambiar la imagen en el carrusel
 def cambiar_imagen(imagen_carrusel, imagenes, imagen_actual):

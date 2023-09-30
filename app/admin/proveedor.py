@@ -1,3 +1,4 @@
+from tkinter import messagebox
 from app.database import get_database_connection
 
 # Función para consultar un usuario en MySQL
@@ -15,73 +16,65 @@ def datos_tabla_proveedor(tabla):
         #insercion de datos
         tabla.insert("", "end", values=(id_proveedor, nombre, codigo, id_prefijo_documento))
 
-def crear_proveedor():
-    # Abrir la ventana producto
-    ventana_crear_proveedor = tk.Toplevel()
-    ventana_crear_proveedor.title("crear proveedor")
-    ventana_crear_proveedor.configure(bg="white")
-   
-    # Crear un marco para el formulario de proveedor
-    formulario_crear = tk.Frame(ventana_crear_proveedor , bg="#1b2838", padx=20, pady=20, borderwidth=2, relief="groove")
-    formulario_crear.pack(padx=20, pady=20)
 
-    titulo_label = tk.Label(formulario_crear, text="Crear Proveedor:", bg="black", fg="white")
-    titulo_label.pack(pady=10)
+def obtener_id_de_descripcion(descripcion):
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
 
-    # Etiqueta de producto
-    proveedor_label = tk.Label(formulario_crear, text="Proveedor:", bg="black", fg="white")
-    proveedor_label.pack(pady=5)
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
 
-   # Cuadro de entrada de proveedor
-    proveedor_crear = tk.Entry(formulario_crear, bg="white")
-    proveedor_crear.pack(pady=5) 
+        # Abrir cursor
+        cursor = conexion.cursor()
 
-    # Etiqueta de categoria
-    codigo_label = tk.Label(formulario_crear, text="Rif:", bg="black", fg="white")
-    codigo_label.pack(pady=5)
+        # Consulta SQL para obtener el ID de un cargo basado en la descripción
+        consulta = "SELECT id_prefijo_cedula FROM prefijo_documento WHERE descripcion_prefijo_cedula = %s"
+        cursor.execute(consulta, (descripcion,))
 
-    # Cuadro de entrada de categoria
-    codigo_entry = tk.Entry(formulario_crear, bg="white")
-    codigo_entry.pack(pady=5)
+        # Obtener el resultado
+        resultado = cursor.fetchone()
 
-    # Etiqueta para cantidad
-    documento_label = tk.Label(formulario_crear, text="Prefijo Documento:", bg="black", fg="white")
-    documento_label.pack(pady=5)
+        if resultado:
+            id_prefijo = resultado[0]
+            return id_prefijo
+        else:
+            return None  # Devolver None si no se encuentra la descripción
 
-    # Cuadro de entrada de cantidad
-    documento_crear = tk.Entry(formulario_crear, bg="white")
-    documento_crear.pack(pady=5)
-
-    def guardar_proveedor():
-        global conexion #definimos la variable conexion como global
-        nombre = proveedor_crear.get()
-        codigo= codigo_entry.get()
-        prefijo_documento=documento_crear.get()
-        
-        fecha_actual=datetime.date.today()
-     
-            #creamos una sentencia para guardar los datos en la base de datos
-        try:
-            #abrir cursor
-            cursor=conexion.cursor()
-            consulta="INSERT INTO proveedor (nombre, codigo, id_prefijo_documento) VALUES (%s, %s, %s)"
-            cursor.execute(consulta, (nombre, codigo, prefijo_documento))
-
-            conexion.commit()
-            #actualizar tabla
-            datos_tabla_proveedor(tabla_proveedor)
-
+    except Exception as e:
+        print(f"Error al obtener ID de descripción: {str(e)}")
+        return None
+    finally:
+        if conexion.is_connected():
             cursor.close()
-            ventana_crear_proveedor.destroy()
+            conexion.close()  
 
-            messagebox.showinfo("Proveedor creado", 'Se ha registrado el proveedor correctamente')
-        except Exception as e:
-            conexion.rollback()
-            messagebox.showerror("Error", f"No se ha podido registrar el proveedor: {str(e)}")
+def guardar_proveedor(proveedor_crear, codigo_entry, selected_prefijo, ventana_crear_proveedor, tabla_proveedor):
+    global conexion #definimos la variable conexion como global
+    nombre = proveedor_crear.get()
+    codigo= codigo_entry.get()
+    prefijo_documento=obtener_id_de_descripcion(selected_prefijo.get())
+    #creamos una sentencia para guardar los datos en la base de datos
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
 
-    # Botón de guardar producto
-    boton_guardar_proveedor = tk.Button(formulario_crear, text="Guardar Proveedor", command=guardar_proveedor, activebackground="#F50743", font=("helvetica", 12))
-    boton_guardar_proveedor.pack(pady=10, ipadx=10)
+        #abrir cursor
+        cursor=conexion.cursor()
+        consulta="INSERT INTO proveedor (nombre, codigo, id_prefijo_documento) VALUES (%s, %s, %s)"
+        cursor.execute(consulta, (nombre, codigo, prefijo_documento))
+
+        conexion.commit()
+        #actualizar tabla
+        datos_tabla_proveedor(tabla_proveedor)
+
+        cursor.close()
+        ventana_crear_proveedor.destroy()
+
+        messagebox.showinfo("Proveedor creado", 'Se ha registrado el proveedor correctamente')
+    except Exception as e:
+        conexion.rollback()
+        messagebox.showerror("Error", f"No se ha podido registrar el proveedor: {str(e)}")
+
 
 # Función para consultar un proveedor en MySQL
 def consultar_proveedor(id_proveedor):
@@ -101,7 +94,7 @@ def consultar_proveedor(id_proveedor):
 
     except Exception as e:
         conexion.rollback()
-        messagebox.showerror("Error", f"No se ha podido consultar el proveedor: {str(e)}")
+        messagebox.showerror("Error", f"No se ha podido consultar el proveedor: {str(e)}")      
         
 def editar_proveedor(id_proveedor):
     proveedor = consultar_proveedor(id_proveedor)
@@ -225,5 +218,28 @@ def eliminar_proveedor(id_proveedor):
             ventana_confirmacion.mainloop()
     except Exception as e:
         conexion.rollback()
-        messagebox.showerror("Error", f"No se ha podido eliminar el proveedor: {str(e)}")            
+        messagebox.showerror("Error", f"No se ha podido eliminar el proveedor: {str(e)}")
+
+def obtener_prefijo():
+    prefijo = []
+    try:
+        # Crea un cursor
+        cursor = conexion.cursor()
+
+        # Ejecuta una consulta SQL para obtener los roles
+        cursor.execute("SELECT  id_prefijo_cedula, descripcion_prefijo_cedula    FROM prefijo_documento")
+
+        # Obtiene todos los resultados de la consulta
+        prefijo = cursor.fetchall()
+    except Exception as e:
+        print(f"Error al obtener los roles desde la base de datos: {str(e)}")
+
+    finally:
+        # Cierra el cursor y la conexión
+        if cursor:
+            cursor.close()
+        if conexion.is_connected():
+            conexion.close()
+
+    return prefijo    
 
