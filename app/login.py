@@ -16,15 +16,15 @@ def iniciar_sesion(usuario_entry, password_entry, ventana):
     if conexion:
         try:
             cursor = conexion.cursor()
-            cursor.execute("select usuario, id_cargo from usuario where usuario = %s and contraseña = %s", (usuario, contrasena))
+            cursor.execute("select usuario, id_usuario from usuario where usuario = %s and contraseña = %s", (usuario, contrasena))
             resultado = cursor.fetchone()
 
             if resultado is not None:
-                username, id_rol = resultado  # Desempaqueta los valores de la tupla
+                username, id_usuario = resultado  # Desempaqueta los valores de la tupla
                 messagebox.showinfo("Inicio de sesión exitoso", f"Bienvenido, {usuario}!")
                 ventana.destroy()  # Cierra la ventana de inicio de sesión actual
                 
-                crear_vista_dashboard(id_rol)
+                crear_vista_dashboard(id_usuario)
   
             else:
                 messagebox.showerror("Inicio de sesión fallido", "Credenciales incorrectas")

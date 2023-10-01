@@ -2,8 +2,10 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from app.admin.proveedor import consultar_proveedor, datos_tabla_proveedor
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, buscar
 from views.admin.crear_proveedor import crear_proveedor
+from views.admin.editar_proveedor import editar_proveedor
+from views.admin.eliminar_proveedor import eliminar_proveedor
 
 #metodo del boton3
 def proveedor(contenedor_derecho):
@@ -65,8 +67,8 @@ def proveedor(contenedor_derecho):
         item_seleccionado = tabla_proveedor.selection()
         if item_seleccionado:
             id_proveedor = tabla_proveedor.item(item_seleccionado, "values")[0]
-            editar_button.configure(command=lambda: editar_proveedor(id_proveedor))
-            eliminar_button.configure(command=lambda: eliminar_proveedor(id_proveedor))
+            editar_button.configure(command=lambda: editar_proveedor(id_proveedor, tabla_proveedor, ))
+            eliminar_button.configure(command=lambda: eliminar_proveedor(id_proveedor, tabla_proveedor))
             editar_button.pack(side="left", padx=10, pady=5)
             eliminar_button.pack(side="left", padx=10, pady=5)
         else:

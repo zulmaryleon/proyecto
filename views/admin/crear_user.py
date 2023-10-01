@@ -38,7 +38,7 @@ def crear_usuario(tabla_usuarios):
     password_crear_confirmar.pack(pady=5)
 
      # Etiqueta de usuario
-    ci_label = tk.Label(formulario_crear, text="Usuario:", bg="black", fg="white")
+    ci_label = tk.Label(formulario_crear, text="Cédula:", bg="black", fg="white")
     ci_label.pack(pady=5)
 
    # Cuadro de entrada de usuario

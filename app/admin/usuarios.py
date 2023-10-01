@@ -24,7 +24,7 @@ def consultar_usuario(id_usuario):
     cursor = conexion.cursor(dictionary=True)  # Utiliza dictionary=True para obtener un diccionario
     # Consultar el usuario por ID
     try:
-        consulta = "SELECT ci_usuario, usuario, correo, fecha_ingreso, id_cargo FROM usuario WHERE id_usuario = %s"
+        consulta = "SELECT ci_usuario, usuario, fecha_ingreso, id_cargo FROM usuario WHERE id_usuario = %s"
         cursor.execute(consulta, (id_usuario,))
         usuario = cursor.fetchone()
 
@@ -37,17 +37,20 @@ def consultar_usuario(id_usuario):
         messagebox.showerror("Error", f"No se ha podido consultar el usuario: {str(e)}")
 
 
-def editar_usuario():
+def editar_usuario_consulta(id_usuario, ventana_editar_usuario, usuario_editar, ci_editar, rol_entry, tabla_usuarios):
     usuario = usuario_editar.get()
-    correo = correo_entry.get()
     rol= rol_entry.get()
     ci= ci_editar.get()
-    fecha_actual=datetime.date.today()
     #creamos una sentencia para guardar los datos en la base de datos
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
+
     try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+
         # Crear la sentencia SQL para actualizar el usuario en la base de datos
-        sentencia = "UPDATE usuario SET usuario = %s, correo = %s, id_cargo = %s, fecha_ingreso = %s, ci_usuario = %s WHERE id_usuario = %s"
-        datos = (usuario, correo, rol, fecha_actual, ci, id_usuario)
+        sentencia = "UPDATE usuario SET usuario = %s, id_cargo = %s, ci_usuario = %s WHERE id_usuario = %s"
+        datos = (usuario, rol, ci, id_usuario)
 
         cursor = conexion.cursor()
         cursor.execute(sentencia, datos)
@@ -64,63 +67,42 @@ def editar_usuario():
         conexion.rollback()
         messagebox.showerror("Error", f"No se ha podido editar el usuario: {str(e)}")
 
-    
 
-def eliminar_usuario(id_usuario):
-    # Aquí debes implementar la lógica para eliminar el usuario con el ID proporcionado.
-    # Puedes utilizar el valor de id_usuario para identificar y eliminar el usuario correspondiente.
-    print(f"Eliminar usuario con ID: {id_usuario}")
-    global conexion #definimos la variable conexion como global
+# Función para eliminar el usuario
+def confirmar_eliminar(id_usuario, tabla_usuarios, ventana_confirmacion, nombre_usuario):
+    #creamos una sentencia para guardar los datos en la base de datos
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
+
     try:
-        # Crear un cursor
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+        
         cursor = conexion.cursor()
 
-        # Consulta para obtener información del usuario
-        consulta = f"SELECT usuario FROM usuario WHERE id_usuario = {id_usuario}"
-        cursor.execute(consulta)
-        usuario = cursor.fetchone()
+        # Consulta para eliminar al usuario
+        consulta_eliminar = f"DELETE FROM usuario WHERE id_usuario = {id_usuario}"
+        cursor.execute(consulta_eliminar)
 
-        # Verificar si se encontró el usuario
-        if usuario is None:
-            messagebox.showinfo("Información", f"No se encontró un usuario con el ID {id_usuario}")
-        else:
-            nombre_usuario = usuario[0]
+        conexion.commit()
 
-            # Crear una ventana Tkinter para la confirmación
-            ventana_confirmacion = tk.Tk()
-            ventana_confirmacion.title("Confirmación")
+        #actualizar tabla
+        datos_tabla_usuarios(tabla_usuarios)
 
-            # Función para eliminar el usuario
-            def confirmar_eliminar():
-                # Consulta para eliminar al usuario
-                consulta_eliminar = f"DELETE FROM usuario WHERE id_usuario = {id_usuario}"
-                cursor.execute(consulta_eliminar)
-                conexion.commit()
-                #actualizar tabla
-                datos_tabla_usuarios(tabla_usuarios)
-                messagebox.showinfo("Información", f"Usuario '{nombre_usuario}' (ID: {id_usuario}) ha sido eliminado.")
-                ventana_confirmacion.destroy()
-
-            # Función para cancelar la eliminación
-            def cancelar_eliminar():
-                messagebox.showinfo("Información", "Operación de eliminación cancelada.")
-                ventana_confirmacion.destroy()
-
-            # Etiqueta de confirmación
-            etiqueta_confirmacion = tk.Label(ventana_confirmacion, text=f"¿Estás seguro de eliminar al usuario '{nombre_usuario}' (ID: {id_usuario})?")
-            etiqueta_confirmacion.pack()
-
-            # Botones de confirmar y cancelar
-            boton_confirmar = tk.Button(ventana_confirmacion, text="Confirmar", command=confirmar_eliminar)
-            boton_cancelar = tk.Button(ventana_confirmacion, text="Cancelar", command=cancelar_eliminar)
-
-            boton_confirmar.pack()
-            boton_cancelar.pack()
-
-            ventana_confirmacion.mainloop()
+        cursor.close()
     except Exception as e:
         conexion.rollback()
-        messagebox.showerror("Error", f"No se ha podido editar el usuario: {str(e)}")  
+        messagebox.showerror("Error", f"No se ha podido editar el usuario: {str(e)}")
+
+    messagebox.showinfo("Información", f"Usuario '{nombre_usuario}' (ID: {id_usuario}) ha sido eliminado.")
+    ventana_confirmacion.destroy()
+
+# Función para cancelar la eliminación
+def cancelar_eliminar(ventana_confirmacion):
+    messagebox.showinfo("Información", "Operación de eliminación cancelada.")
+    ventana_confirmacion.destroy()
+
+            
+    
 
 def obtener_id_de_descripcion(descripcion):
     global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
@@ -148,10 +130,7 @@ def obtener_id_de_descripcion(descripcion):
     except Exception as e:
         print(f"Error al obtener ID de descripción: {str(e)}")
         return None
-    finally:
-        if conexion.is_connected():
-            cursor.close()
-            conexion.close()
+
 
 def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci, selected_role, ventana_crear_usuario, tabla_usuarios):
     global conexion  # Indicar que estás utilizando la variable global
@@ -205,12 +184,5 @@ def obtener_roles():
 
     except Exception as e:
         print(f"Error al obtener los roles desde la base de datos: {str(e)}")
-
-    finally:
-        # Cierra el cursor y la conexión
-        if cursor:
-            cursor.close()
-        if conexion.is_connected():
-            conexion.close()
 
     return roles

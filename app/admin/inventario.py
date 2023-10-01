@@ -1,8 +1,70 @@
 from tkinter import messagebox
 from app.database import get_database_connection
-
-# Función para consultar un usuario en MySQL
+import datetime
+# Función para consultar un producto en MySQL
 conexion = get_database_connection()
+
+def obtener_id_de_descripcion_categoria(descripcion):
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
+
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+
+        # Abrir cursor
+        cursor = conexion.cursor()
+
+        # Consulta SQL para obtener el ID de un cargo basado en la descripción
+        consulta = "SELECT id_categoria FROM categoria WHERE descripcion_categoria = %s"
+        cursor.execute(consulta, (descripcion,))
+
+        # Obtener el resultado
+        resultado = cursor.fetchone()
+
+        if resultado:
+            id_categoria = resultado[0]
+            return id_categoria
+        else:
+            return None  # Devolver None si no se encuentra la descripción
+
+    except Exception as e:
+        print(f"Error al obtener ID de descripción: {str(e)}")
+        return None
+    finally:
+        if conexion.is_connected():
+            cursor.close()
+            conexion.close() 
+
+def obtener_id_de_descripcion_proveedores(descripcion):
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
+
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+
+        # Abrir cursor
+        cursor = conexion.cursor()
+
+        # Consulta SQL para obtener el ID de un cargo basado en la descripción
+        consulta = "SELECT id_proveedor FROM proveedor WHERE nombre = %s"
+        cursor.execute(consulta, (descripcion,))
+
+        # Obtener el resultado
+        resultado = cursor.fetchone()
+
+        if resultado:
+            id_proveedor = resultado[0]
+            return id_proveedor
+        else:
+            return None  # Devolver None si no se encuentra la descripción
+
+    except Exception as e:
+        print(f"Error al obtener ID de descripción: {str(e)}")
+        return None
+    finally:
+        if conexion.is_connected():
+            cursor.close()
+            conexion.close()             
 
 def datos_tabla_inventario(tabla):
     #eliminamos todos lo elementos antes de actualizar
@@ -33,115 +95,147 @@ def consultar_producto(id_producto):
         conexion.rollback()
         messagebox.showerror("Error", f"No se ha podido consultar el producto: {str(e)}")
 
-#crear formulario de inventario
-def crear_producto():
-    # Abrir la ventana producto
-    ventana_crear_producto = tk.Toplevel()
-    ventana_crear_producto.title("crear producto")
-    ventana_crear_producto.configure(bg="white")
-   
-    # Crear un marco para el formulario
-    formulario_crear = tk.Frame(ventana_crear_producto , bg="#1b2838", padx=20, pady=20, borderwidth=2, relief="groove")
-    formulario_crear.pack(padx=20, pady=20)
 
-    titulo_label = tk.Label(formulario_crear, text="Crear Producto:", bg="black", fg="white")
-    titulo_label.pack(pady=10)
+def confirmar_eliminar(id_producto, ventana_confirmacion, tabla, descripcion_producto):
+    #creamos una sentencia para guardar los datos en la base de datos
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
 
-    # Etiqueta de producto
-    producto_label = tk.Label(formulario_crear, text="Producto:", bg="black", fg="white")
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+        
+        cursor = conexion.cursor()
 
-    titulo_label = tk.Label(formulario_crear, text="Crear producto:", bg="black", fg="white")
-    titulo_label.pack(pady=10)
+        # Consulta para eliminar al producto
+        consulta_eliminar = f"DELETE FROM productos WHERE id_producto = {id_producto}"
+        cursor.execute(consulta_eliminar)
 
-    # Etiqueta de producto
-    producto_label = tk.Label(formulario_crear, text="producto:", bg="black", fg="white")
-    producto_label.pack(pady=5)
+        conexion.commit()
 
-   # Cuadro de entrada de producto
-    producto_crear = tk.Entry(formulario_crear, bg="white")
-    producto_crear.pack(pady=5) 
+        #actualizar tabla
+        datos_tabla_inventario(tabla)
 
-    # Etiqueta de categoria
-    categoria_label = tk.Label(formulario_crear, text="Categoria:", bg="black", fg="white")
-    categoria_label.pack(pady=5)
+        cursor.close()
+    except Exception as e:
+        conexion.rollback()
+        messagebox.showerror("Error", f"No se ha podido editar el producto: {str(e)}")
 
-    # Cuadro de entrada de categoria
-    categoria_entry = tk.Entry(formulario_crear, bg="white")
-    categoria_entry.pack(pady=5)
+    messagebox.showinfo("Información", f"producto '{descripcion_producto}' (ID: {id_producto}) ha sido eliminado.")
+    ventana_confirmacion.destroy()
 
-    # Etiqueta para cantidad
-    cantidad_label = tk.Label(formulario_crear, text="Cantidad:", bg="black", fg="white")
-    cantidad_label.pack(pady=5)
-
-    # Cuadro de entrada de cantidad
-    cantidad_crear = tk.Entry(formulario_crear, bg="white")
-    cantidad_crear.pack(pady=5)
-
-    # Etiqueta para precio del producto
-    precio_label = tk.Label(formulario_crear, text="Precio al mayor:", bg="black", fg="white")
-    precio_label.pack(pady=5)
-
-    # Cuadro de entrada para el precio
-    precio_crear = tk.Entry(formulario_crear, bg="white")
-    precio_crear.pack(pady=5)
-
-    # Etiqueta para precio del producto
-    precio_unitario_label = tk.Label(formulario_crear, text="Precio unitario:", bg="black", fg="white")
-    precio_unitario_label.pack(pady=5)
-
-    # Cuadro de entrada del precio
-    precio_unitario_crear = tk.Entry(formulario_crear, bg="white")
-    precio_unitario_crear.pack(pady=5)
-
-    # Etiqueta para la fecha de vencimiento
-    fecha_vencimiento_label = tk.Label(formulario_crear, text="Fecha de vencimiento:", bg="black", fg="white")
-    fecha_vencimiento_label.pack(pady=5)
-
-    # Cuadro de entrada de la fecha de vencimiento
-    fecha_vencimiento_crear = tk.Entry(formulario_crear, bg="white")
-    fecha_vencimiento_crear.pack(pady=5)
-
-    # Etiqueta para precio del producto
-    proveedor_label = tk.Label(formulario_crear, text="Proveedor:", bg="black", fg="white")
-    proveedor_label.pack(pady=5)
-
-    # Cuadro de entrada del precio
-    proveedor_crear = tk.Entry(formulario_crear, bg="white")
-    proveedor_crear.pack(pady=5)
-
+def cancelar_eliminar(ventana_confirmacion):
+    messagebox.showinfo("Información", "Operación de eliminación cancelada.")
+    ventana_confirmacion.destroy()
     
-    def guardar_producto():
-        global conexion #definimos la variable conexion como global
-        producto = producto_crear.get()
-        categoria = categoria_entry.get()
-        cantidad = cantidad_crear.get()
-        precio_mayor=precio_crear.get()
-        precio_unitario = precio_unitario_crear.get()
-        fecha_vencimiento= fecha_vencimiento_crear.get()
-        proveedor = proveedor_crear.get()
-        fecha_actual=datetime.date.today()
+def guardar_producto(producto_crear, categoria, precio_crear, cantidad_crear, precio_unitario_crear, fecha_vencimiento_crear, tabla_inventario, ventana_crear_producto, selected_proveedor):
+    global conexion #definimos la variable conexion como global
+    
+    producto = producto_crear.get()
+    categoria = obtener_id_de_descripcion_categoria(categoria.get())
+    cantidad = cantidad_crear.get()
+    precio_mayor=precio_crear.get()
+    precio_unitario = precio_unitario_crear.get()
+    fecha_vencimiento= fecha_vencimiento_crear.get()
+    proveedor = obtener_id_de_descripcion_proveedores(selected_proveedor.get())
+    fecha_actual = datetime.date.today()
 
-        #creamos una sentencia para guardar los datos en la base de datos
-        try:
-            #abrir cursor
-            cursor=conexion.cursor()
-            consulta="INSERT INTO productos (descripcion_producto, id_categoria, cantidad_total, costo_mayor, precio_unitario, fecha_vencimiento, id_proveedor) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            cursor.execute(consulta, (producto, categoria, cantidad, precio_mayor, precio_unitario, fecha_vencimiento, proveedor))
+    print(f"Id proveedor: {str(proveedor)}")
+    print(f"Id categoria: {str(categoria)}")
+    print(f"cantidad: {str(cantidad)}")
+    print(f"precio_mayor: {str(precio_mayor)}")
+    print(f"precio_unitario: {str(precio_unitario)}")
+    #creamos una sentencia para guardar los datos en la base de datos
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+        #abrir cursor
 
-            conexion.commit()
-            #actualizar tabla
-            datos_tabla_inventario(tabla_inventario)
+        cursor=conexion.cursor()
 
-            cursor.close()
-            ventana_crear_producto.destroy()
+        consulta="INSERT INTO productos (descripcion_producto, id_categoria, cantidad_total, costo_mayor, precio_unitario, fecha_vencimiento, id_proveedor) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(consulta, (producto, categoria, cantidad, precio_mayor, precio_unitario, fecha_vencimiento, proveedor))
 
-            messagebox.showinfo("Producto creado", 'Se ha registrado el producto correctamente')
+        conexion.commit()
+        #actualizar tabla
+        datos_tabla_inventario(tabla_inventario)
 
-            messagebox.showinfo("Usuario creado", 'Se ha registrado el producto correctamente')
-        except Exception as e:
-            conexion.rollback()
-            messagebox.showerror("Error", f"No se ha podido registrar el producto: {str(e)}")
+        cursor.close()
 
-    # Botón de guardar producto
-    boton_guardar_producto = tk.Button(formulario_crear, text="Crear Producto", command=guardar_producto, activebackground="#F50743", font=("helvetica", 12))
-    boton_guardar_producto.pack(pady=10, ipadx=10)        
+        ventana_crear_producto.destroy()
+        
+        messagebox.showinfo("Producto creado", 'Se ha registrado el producto correctamente')
+
+        messagebox.showinfo("producto creado", 'Se ha registrado el producto correctamente')
+    except Exception as e:
+        conexion.rollback()
+        messagebox.showerror("Error", f"No se ha podido registrar el producto: {str(e)}")
+
+
+def editar_datos_producto(id_producto, producto_editar,cantidad_editar, fecha_vencimiento, proveedores_editar,precio_compra_editar, precio_venta_editar, ventana_editar_producto, tabla_producto):
+    nombre_producto = producto_editar.get()
+    cantidad = cantidad_editar.get()
+    vencimiento = fecha_vencimiento.get()
+    proveedor = proveedores_editar.get()
+    precio_compra  = precio_compra_editar.get()
+    precio_venta = precio_venta_editar.get()
+    id_producto = id_producto
+    categoria = '2'
+
+    #creamos una sentencia para guardar los datos en la base de datos
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
+
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+
+        # Crear la sentencia SQL para actualizar el producto en la base de datos
+        sentencia = "UPDATE productos SET descripcion_producto = %s, cantidad_total = %s, fecha_vencimiento	= %s, id_proveedor = %s, id_categoria = %s, precio_unitario = %s, costo_mayor = %s WHERE id_producto = %s"
+        datos = (nombre_producto, cantidad, vencimiento, proveedor, categoria, precio_venta, precio_compra, id_producto)
+
+        cursor = conexion.cursor()
+        cursor.execute(sentencia, datos)
+        conexion.commit()
+
+        #actualizar tabla
+        datos_tabla_inventario(tabla_producto)
+
+        cursor.close()
+        ventana_editar_producto.destroy()
+
+        messagebox.showinfo("Producto editar", 'Se ha editado el producto correctamente')
+    except Exception as e:
+        conexion.rollback()
+        messagebox.showerror("Error", f"No se ha podido editar el producto: {str(e)}")  
+
+
+def obtener_categorias():
+    categoria = []
+    try:
+        # Crea un cursor
+        cursor = conexion.cursor()
+
+        # Ejecuta una consulta SQL para obtener los roles
+        cursor.execute("SELECT  id_categoria, descripcion_categoria FROM categoria")
+
+        # Obtiene todos los resultados de la consulta
+        categoria = cursor.fetchall()
+    except Exception as e:
+        print(f"Error al obtener las categorias desde la base de datos: {str(e)}")
+
+    return categoria              
+
+def obtener_proveedores():
+    proveedores = []
+    try:
+        # Crea un cursor
+        cursor = conexion.cursor()
+
+        # Ejecuta una consulta SQL para obtener los roles
+        cursor.execute("SELECT id_proveedor, nombre FROM proveedor")
+
+        # Obtiene todos los resultados de la consulta
+        proveedores = cursor.fetchall()
+    except Exception as e:
+        print(f"Error al obtener los proveedores desde la base de datos: {str(e)}")
+
+    return proveedores 

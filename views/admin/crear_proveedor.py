@@ -1,4 +1,5 @@
 import tkinter as tk
+from app.database import get_database_connection
 from app.admin.proveedor import guardar_proveedor, obtener_prefijo
 
 def crear_proveedor(tabla_proveedor):

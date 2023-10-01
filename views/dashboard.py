@@ -1,13 +1,17 @@
 import tkinter as tk
 from customtkinter  import CTk, CTkFrame, CTkEntry, CTkLabel, CTkButton, CTkCheckBox
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, cambiar_imagen, avanzar_carrusel, redimensionar_imagen, cerrar_sesion
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, cambiar_imagen, avanzar_carrusel, redimensionar_imagen, cerrar_sesion, obtener_datos_session
 from views.admin.inicio import inicio
 from views.admin.usuarios import usuarios
 from views.admin.inventario import inventario
 from views.admin.proveedor import proveedor
 from views.admin.movimientos import movimientos
 
-def crear_vista_dashboard(id_rol):
+from views.empleado.inventario import inventario_user
+from views.empleado.movimientos import movimientos_user
+from views.empleado.inicio import inicio_user
+
+def crear_vista_dashboard(id_usuario):
     ventana_dashboard = CTk() 
     ventana_dashboard.geometry("900x600+350+20")
     ventana_dashboard.minsize(480, 500)
@@ -63,6 +67,10 @@ def crear_vista_dashboard(id_rol):
     # Inicia el carrusel automático
     #avanzar_carrusel(imagen_carrusel, imagenes, imagen_actual, ventana_dashboard)        
 
+    datos = obtener_datos_session(id_usuario)
+    id_rol = datos[0]
+    username = datos[1]
+
     if(id_rol == 1):
         # Opción 0
         opcion0 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
@@ -97,21 +105,20 @@ def crear_vista_dashboard(id_rol):
         # Opción 0
         opcion1 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
         hover_color=c_rojo,corner_radius=12,border_width=2,
-        text='Inicio') #, command=lambda: inicio_user(contenedor_derecho)
+        text='Inicio', command=lambda:inicio_user(contenedor_derecho)) #, command=lambda: inicio_user(contenedor_derecho)
         opcion1.pack(pady=5)  
 
         # Opción 2
         opcion2 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
         hover_color=c_rojo,corner_radius=12,border_width=2,
-        text='Inventario') #, command=lambda: inventario_user(contenedor_derecho)
+        text='Inventario', command=lambda:inventario_user(contenedor_derecho)) #, command=lambda: inventario_user(contenedor_derecho)
         opcion2.pack(pady=5)     
 
         # Opción 4
         opcion3 = CTkButton(panel_izquierdo, border_color=c_verde, fg_color = c_negro,
         hover_color=c_rojo,corner_radius=12,border_width=2,
-        text='Movimientos') #, command=lambda: movimientos(contenedor_derecho)
+        text='Movimientos', command=lambda:movimientos_user(contenedor_derecho, id_usuario)) #, command=lambda: movimientos(contenedor_derecho) 
         opcion3.pack(pady=5) 
-
     # Agregar recuadro inferior
     recuadro_inferior = tk.Frame(panel_izquierdo, bg=c_verde, relief="solid")
     recuadro_inferior.pack(side="bottom", fill="x")
@@ -131,10 +138,10 @@ def crear_vista_dashboard(id_rol):
     #icono_label.pack(side="right", padx=10)
 
     # Agregar rol
-    rol_label = tk.Label(recuadro_inferior, text="Username: Admin", bg=c_verde, fg="white", font=("Arial", 14))
+    rol_label = tk.Label(recuadro_inferior, text=f"Username: {str(username)}", bg=c_verde, fg="white", font=("Arial", 14))
     rol_label.pack(padx=10)
 
-    username = tk.Label(recuadro_inferior, text="Rol: Administrador", bg=c_verde, fg="white", font=("Arial", 14))
+    username = tk.Label(recuadro_inferior, text=f"Rol: {str(id_rol)}", bg=c_verde, fg="white", font=("Arial", 14))
     username.pack(padx=10)
 
     #configuramos el cierre de ventana

@@ -2,8 +2,10 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from app.admin.usuarios import consultar_usuario, datos_tabla_usuarios
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, buscar
 from views.admin.crear_user import crear_usuario
+from views.admin.editar_user import editar_usuario
+from views.admin.eliminar_usuario import eliminar_usuario
 
 def usuarios(contenedor_derecho):
 	# Limpia el contenido anterior
@@ -54,16 +56,16 @@ def usuarios(contenedor_derecho):
     boton_guardar_usuario.pack(side="left", padx=10, pady=5)
 
     # Botones Editar y Eliminar (ocultos inicialmente)
-    editar_button = tk.Button(frame_principal, text="Editar", command=lambda: editar_usuario(id_usuario))
-    eliminar_button = tk.Button(frame_principal, text="Eliminar", command=lambda: eliminar_usuario(id_usuario))
+    editar_button = tk.Button(frame_principal, text="Editar", command=lambda: editar_usuario(id_usuario, tabla_usuarios))
+    eliminar_button = tk.Button(frame_principal, text="Eliminar", command=lambda: eliminar_usuario(id_usuario, tabla_usuarios))
 
     # Configurar la acción de selección de usuario
     def seleccionar_usuario(event):
         item_seleccionado = tabla_usuarios.selection()
         if item_seleccionado:
             id_usuario = tabla_usuarios.item(item_seleccionado, "values")[0]
-            editar_button.configure(command=lambda: editar_usuario(id_usuario))
-            eliminar_button.configure(command=lambda: eliminar_usuario(id_usuario))
+            editar_button.configure(command=lambda: editar_usuario(id_usuario, tabla_usuarios))
+            eliminar_button.configure(command=lambda: eliminar_usuario(id_usuario, tabla_usuarios))
             editar_button.pack(side="left", padx=10, pady=5)
             eliminar_button.pack(side="left", padx=10, pady=5)
         else:

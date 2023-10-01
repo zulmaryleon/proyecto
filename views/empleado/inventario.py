@@ -1,14 +1,9 @@
-# Importa las funciones para obtener ventas y compras
 import tkinter as tk
 from tkinter import messagebox, ttk
-from app.admin.inventario import consultar_producto, datos_tabla_inventario
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, buscar
-from views.admin.crear_producto import crear_producto
-from views.admin.editar_producto import editar_producto
-from views.admin.eliminar_producto import eliminar_producto
+from app.empleado.inventario import datos_tabla_inventario
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, cambiar_imagen, avanzar_carrusel, redimensionar_imagen, cerrar_sesion
 
-#metodo del boton2
-def inventario(contenedor_derecho):
+def inventario_user(contenedor_derecho):
     # Limpia el contenido anterior
     for widget in contenedor_derecho.winfo_children():
         widget.destroy()
@@ -29,7 +24,7 @@ def inventario(contenedor_derecho):
     entrada_busqueda.pack(side="left")
 
     # Crear la entrada de búsqueda
-    boton_buscar = tk.Button(frame_buscador, text="Buscar", command=lambda: buscar(tabla_inventario, entrada_busqueda))
+    boton_buscar = tk.Button(frame_buscador, text="Buscar", command=lambda: buscar(tabla_usuarios, entrada_busqueda))
     boton_buscar.pack(side="left")
 
     #crear la tabla de inventario del contenedor derecho
@@ -58,14 +53,6 @@ def inventario(contenedor_derecho):
     #mostrar la tabla en el contenedor derecho
     tabla_inventario.pack(fill="both",expand=True)
 
-    #boton de crear producto
-    boton_guardar_inventario=tk.Button(frame_principal,text="crear producto", command = lambda: crear_producto(tabla_inventario))
-    boton_guardar_inventario.pack(side="left",padx=10,pady=5)
-
-    # Botones Editar y Eliminar (ocultos inicialmente)
-    editar_button = tk.Button(frame_principal, text="Editar", command=lambda: editar_producto(id_producto))
-    eliminar_button = tk.Button(frame_principal, text="Eliminar", command=lambda: eliminar_producto(id_producto))
-
     # Botones vender y comprar (ocultos inicialmente)
     vender_button = tk.Button(frame_principal, text="Vender", command=lambda: vender_producto(id_producto))
     comprar_button = tk.Button(frame_principal, text="Comprar", command=lambda: comprar_producto(id_producto))
@@ -75,18 +62,14 @@ def inventario(contenedor_derecho):
         item_seleccionado = tabla_inventario.selection()
         if item_seleccionado:
             id_producto = tabla_inventario.item(item_seleccionado, "values")[0]
-            editar_button.configure(command=lambda: editar_producto(id_producto, tabla_inventario))
-            eliminar_button.configure(command=lambda: eliminar_producto(id_producto, tabla_inventario))
+           
             vender_button.configure(command=lambda: vender_producto(id_producto))
             comprar_button.configure(command=lambda: comprar_producto(id_producto))
-            editar_button.pack(side="left", padx=10, pady=5)
-            eliminar_button.pack(side="left", padx=10, pady=5)
+    
             vender_button.pack(side="left", padx=10, pady=5)
             comprar_button.pack(side="left", padx=10, pady=5)
 
         else:
-            editar_button.pack_forget()
-            eliminar_button.pack_forget()
             vender_button.pack_forget()
             comprar_button.pack_forget()
 
