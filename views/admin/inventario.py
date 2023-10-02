@@ -1,11 +1,19 @@
 # Importa las funciones para obtener ventas y compras
 import tkinter as tk
 from tkinter import messagebox, ttk
+
+# Modulos de logica
 from app.admin.inventario import consultar_producto, datos_tabla_inventario
 from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, buscar
+
+# Modulos de vistas formularios
 from views.admin.crear_producto import crear_producto
 from views.admin.editar_producto import editar_producto
 from views.admin.eliminar_producto import eliminar_producto
+
+# Modulos vistas formularios 
+from views.comprar import comprar_producto
+from views.vender import vender_producto
 
 #metodo del boton2
 def inventario(contenedor_derecho):
@@ -13,7 +21,7 @@ def inventario(contenedor_derecho):
     for widget in contenedor_derecho.winfo_children():
         widget.destroy()
 
-    etiqueta_titulo = tk.Label(contenedor_derecho, text="Inventario", fg=c_blanco, bg=c_verde, font=("Arial", 16, "bold"))
+    etiqueta_titulo = tk.Label(contenedor_derecho, text="Inventario", fg=c_blanco, bg=c_negro, font=("Arial", 16, "bold"))
     etiqueta_titulo.pack(pady=10)
 
     # Crear un Frame principal para contener todo
@@ -77,8 +85,8 @@ def inventario(contenedor_derecho):
             id_producto = tabla_inventario.item(item_seleccionado, "values")[0]
             editar_button.configure(command=lambda: editar_producto(id_producto, tabla_inventario))
             eliminar_button.configure(command=lambda: eliminar_producto(id_producto, tabla_inventario))
-            vender_button.configure(command=lambda: vender_producto(id_producto))
-            comprar_button.configure(command=lambda: comprar_producto(id_producto))
+            vender_button.configure(command=lambda: vender_producto(id_producto, tabla_inventario))
+            comprar_button.configure(command=lambda: comprar_producto(id_producto, tabla_inventario))
             editar_button.pack(side="left", padx=10, pady=5)
             eliminar_button.pack(side="left", padx=10, pady=5)
             vender_button.pack(side="left", padx=10, pady=5)

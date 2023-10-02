@@ -10,6 +10,13 @@ c_azul = '#3300FF'
 c_blanco = '#fff'
 c_gris = 'gray90'
 c_azul_e  = '#1b2838'
+c_gris_oscuro = '#333333'
+blanco_gris = '#FFFFFF'
+plata = '#D3D3D3'
+azul_claro = '#6699FF'
+rojo_claro = '#FF6666'
+verde = '#00FF00'
+
 conexion = get_database_connection()
 
 def obtener_datos_session(id_usuario):

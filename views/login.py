@@ -20,7 +20,7 @@ def crear_vista_login():
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
 
-    logo = tk.PhotoImage(file='imagenes/user.png') 
+    logo = tk.PhotoImage(file='imagenes/logo.png') 
     img_google = tk.PhotoImage(file='imagenes/user.png')
     img_facebook = tk.PhotoImage(file='imagenes/user.png')
 
@@ -29,19 +29,19 @@ def crear_vista_login():
     imagen_label = tk.Label(frame, image=imagen_central, bg=c_negro).grid(columnspan=2, row=0)
 
     usuario_entry = CTkEntry(frame, placeholder_text= 'Usuario', 
-        border_color=c_verde, fg_color= c_blanco, width =220,height=40)
+        border_color=c_azul, fg_color= c_blanco, width =220,height=40)
     usuario_entry.grid(columnspan=2, row=1,padx=4, pady =4)
 
     password_entry = CTkEntry(frame,show="*", placeholder_text= 'Contraseña',
-     border_color= c_verde, fg_color= c_blanco, width =220,height=40)
+     border_color= c_azul, fg_color= c_blanco, width =220,height=40)
     password_entry.grid(columnspan=2, row=2,padx=4, pady =4)
 
     checkbox = CTkCheckBox(frame, text="Recordarme",hover_color= c_rojo, 
-        border_color=c_verde, fg_color=c_verde)
+        border_color=c_azul, fg_color=c_azul)
     checkbox.grid(columnspan=2, row=3,padx=4, pady =4)
 
-    bt_iniciar = CTkButton(frame, border_color=c_verde, fg_color = c_negro,
-        hover_color=c_rojo,corner_radius=12,border_width=2,
+    bt_iniciar = CTkButton(frame, border_color=c_azul, fg_color = c_negro,
+        hover_color=c_azul,corner_radius=12,border_width=2,
         text='INICIAR SESIÓN', command=lambda: iniciar_sesion(usuario_entry, password_entry, root))
     bt_iniciar.grid(columnspan=2, row=4,padx=4, pady =4)
 

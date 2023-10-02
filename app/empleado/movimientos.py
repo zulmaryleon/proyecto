@@ -10,13 +10,11 @@ def datos_tabla_movimientos(tabla, id_user):
     tabla.delete(*tabla.get_children())
 
     cursor = conexion.cursor()
-    cursor.execute("select id_movimientos, descripcion_movimiento, id_status_movimientos,total, fecha_registro from movimientos where id_usuario = %s", (id_user))
-    resultado= cursor.fetchone()
-    if resultado:
-        for id_movimientos, descripcion_movimiento, id_status_movimientos, total, fecha_registro  in resultado:
-            #insercion de datos
-            tabla.insert("", "end", values=(id_movimientos, descripcion_movimiento, id_status_movimientos,total))
-        else:
-            return None  # Devolver None si no se encuentra la descripción
+    cursor.execute("SELECT id_movimientos, descripcion_movimiento, id_status_movimientos, total, fecha_registro FROM movimientos WHERE id_usuario = %s", (id_user,))
+    resultados = cursor.fetchall()  # Obtenemos todas las filas de resultados
+
+    for id_movimientos, descripcion_movimiento, id_status_movimientos, total, fecha_registro  in resultados:
+        #insercion de datos
+        tabla.insert("", "end", values=(id_movimientos, descripcion_movimiento, id_status_movimientos,total))
     
-   
+    cursor.close()  # Cierra el cursor cuando hayas terminado
