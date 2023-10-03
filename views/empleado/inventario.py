@@ -1,14 +1,18 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from app.empleado.inventario import datos_tabla_inventario
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, cambiar_imagen, avanzar_carrusel, redimensionar_imagen, cerrar_sesion
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, redimensionar_imagen, cerrar_sesion
 
-def inventario_user(contenedor_derecho):
+# Modulos vistas formularios 
+from views.comprar import comprar_producto
+from views.vender import vender_producto
+
+def inventario_user(contenedor_derecho, username):
     # Limpia el contenido anterior
     for widget in contenedor_derecho.winfo_children():
         widget.destroy()
 
-    etiqueta_titulo = tk.Label(contenedor_derecho, text="Inventario", fg=c_blanco, bg=c_verde, font=("Arial", 16, "bold"))
+    etiqueta_titulo = tk.Label(contenedor_derecho, text="Inventario", fg=c_blanco, bg=c_negro, font=("Arial", 16, "bold"))
     etiqueta_titulo.pack(pady=10)
 
     # Crear un Frame principal para contener todo
@@ -63,8 +67,8 @@ def inventario_user(contenedor_derecho):
         if item_seleccionado:
             id_producto = tabla_inventario.item(item_seleccionado, "values")[0]
            
-            vender_button.configure(command=lambda: vender_producto(id_producto))
-            comprar_button.configure(command=lambda: comprar_producto(id_producto))
+            vender_button.configure(command=lambda: vender_producto(id_producto, tabla_inventario, username))
+            comprar_button.configure(command=lambda: comprar_producto(id_producto, tabla_inventario, username))
     
             vender_button.pack(side="left", padx=10, pady=5)
             comprar_button.pack(side="left", padx=10, pady=5)

@@ -1,6 +1,6 @@
 import tkinter as tk
 from customtkinter  import CTk, CTkFrame, CTkEntry, CTkLabel, CTkButton, CTkCheckBox
-from app.utils import c_negro, c_verde, c_azul, azul_claro, rojo_claro, plata, blanco_gris, c_gris, cambiar_imagen, avanzar_carrusel, redimensionar_imagen, cerrar_sesion, obtener_datos_session
+from app.utils import c_negro, c_verde, c_azul, azul_claro, rojo_claro, plata, blanco_gris, c_gris, redimensionar_imagen, cerrar_sesion, obtener_datos_session
 from views.admin.inicio import inicio
 from views.admin.usuarios import usuarios
 from views.admin.inventario import inventario
@@ -23,59 +23,22 @@ def crear_vista_dashboard(id_usuario):
     panel_izquierdo.pack(side="left", fill="y")
 
     logo = tk.PhotoImage(file='imagenes/logo.png') 
-    imagen_central = redimensionar_imagen(logo, 100, 100),
-
-    imagen_label = tk.Label(panel_izquierdo, image=imagen_central, bg=c_negro).pack(pady=10)
+    imagen_central = redimensionar_imagen(logo, 100, 100)
 
     # Elementos del menú
     etiqueta_menu = tk.Label(panel_izquierdo, text="Menú", bg=c_negro, fg="white", font=("Arial", 20, "bold"))
     etiqueta_menu.pack(pady=10)
-
+    
     # Contenedor a la derecha
     contenedor_derecho = tk.Frame(ventana_dashboard, bg=c_negro)
     contenedor_derecho.pack(side="right", fill="both", expand=True)
-
-    # Cargar las imágenes
-    imagen1 = tk.PhotoImage(file="imagenes/img.png")
-    imagen2 = tk.PhotoImage(file="imagenes/img2.png")
-    imagen3 = tk.PhotoImage(file="imagenes/img.png")
-
-    ancho_deseado = 200  # Especifica el ancho deseado para las imágenes
-    alto_deseado = 250   # Especifica el alto deseado para las imágenes
-
-    # Lista de imágenes para el carrusel
-    imagenes = [
-        redimensionar_imagen(imagen1, ancho_deseado, alto_deseado),
-        redimensionar_imagen(imagen2, ancho_deseado, alto_deseado),
-        redimensionar_imagen(imagen3, ancho_deseado, alto_deseado)
-    ]
-
-    # Variable para rastrear la imagen actual en el carrusel
-    imagen_actual = 0
-
-    # Agregar elementos al contenedor resaltado
-    etiqueta_titulo = tk.Label(contenedor_derecho, text="Inicio Inventario cinelandia \n bienvenido al panel de adminsitrador tu rol es rol \n Selecciona una opcion del menu izquierdo.", bg="white", font=("Arial", 16, "bold"))
-    etiqueta_titulo.pack(pady=10)
-
-    # Etiqueta para el carrusel
-    #imagen_carrusel = tk.Label(contenedor_derecho, image=imagenes[0], bg="#1b2838")
-    #imagen_carrusel.pack(pady=5)
-
-    # Indicadores de imágenes (puntos)
-    #indicadores = []
-    #for i in range(len(imagenes)):
-    #    indicador = tk.Label(contenedor_derecho, text="●", font=("Helvetica", 14), bg="#1b2838", fg="white", activebackground="#F50743")
-    #    indicador.bind("<Button-1>", lambda event, index=i: cambiar_imagen(index))
-    #    indicadores.append(indicador)
-    #    indicador.place(relx=0.43 + i * 0.05, rely=0.80)
-
-    # Inicia el carrusel automático
-    #avanzar_carrusel(imagen_carrusel, imagenes, imagen_actual, ventana_dashboard)        
 
     datos = obtener_datos_session(id_usuario)
     id_rol = datos[0]
     username = datos[1]
 
+    inicio(contenedor_derecho)
+    
     if(id_rol == 1):
         # Opción 0
         opcion0 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
@@ -92,7 +55,7 @@ def crear_vista_dashboard(id_usuario):
         # Opción 2
         opcion2 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
-        text='Inventario', command=lambda: inventario(contenedor_derecho))
+        text='Inventario', command=lambda: inventario(contenedor_derecho, username))
         opcion2.pack(pady=5)
 
         # Opción 3
@@ -110,13 +73,13 @@ def crear_vista_dashboard(id_usuario):
         # Opción 0
         opcion1 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
-        text='Inicio', command=lambda:inicio_user(contenedor_derecho)) #, command=lambda: inicio_user(contenedor_derecho)
+        text='Inicio', command=lambda:inicio(contenedor_derecho)) #, command=lambda: inicio_user(contenedor_derecho)
         opcion1.pack(pady=5)  
 
         # Opción 2
         opcion2 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
-        text='Inventario', command=lambda:inventario_user(contenedor_derecho)) #, command=lambda: inventario_user(contenedor_derecho)
+        text='Inventario', command=lambda:inventario_user(contenedor_derecho, username)) #, command=lambda: inventario_user(contenedor_derecho)
         opcion2.pack(pady=5)     
 
         # Opción 4

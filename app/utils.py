@@ -45,20 +45,6 @@ def obtener_datos_session(id_usuario):
     except Exception as e:
         print(f"Error al obtener ID de descripción: {str(e)}")
         return None          
-   
-# Función para cambiar la imagen en el carrusel
-def cambiar_imagen(imagen_carrusel, imagenes, imagen_actual):
-    siguiente_indice = (imagen_actual + 1) % len(imagenes)
-    imagen = imagenes[siguiente_indice]
-    imagen_carrusel.configure(image=imagen)
-    imagen_carrusel.image = imagen
-    imagen_actual = siguiente_indice
-
-# Función para avanzar automáticamente el carrusel
-def avanzar_carrusel(imagen_carrusel, imagenes, imagen_actual, ventana):
-    siguiente_indice = (imagen_actual + 1) % len(imagenes)
-    cambiar_imagen(imagen_carrusel, imagenes, imagen_actual)
-    ventana.after(3000, lambda: avanzar_carrusel(imagen_carrusel, imagenes, imagen_actual, ventana))
 
 # Función para redimensionar una imagen
 def redimensionar_imagen(imagen, ancho, alto):

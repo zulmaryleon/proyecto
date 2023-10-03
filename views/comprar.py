@@ -1,7 +1,7 @@
 import tkinter as tk
 from app.admin.inventario import consultar_producto
-from app.comprar import hacer_inventario
-def comprar_producto(id_producto, tabla_producto):
+from views.confirmar_comprar import hacer_compra
+def comprar_producto(id_producto, tabla_producto, username):
     producto = consultar_producto(id_producto)
     # Puedes utilizar el valor de id_producto para identificar y editar el proveedpr correspondiente.
     print(f"Editar producto con ID: {id_producto}")
@@ -28,13 +28,21 @@ def comprar_producto(id_producto, tabla_producto):
     cantidad = tk.Entry(formulario, bg="white")
     cantidad.pack(pady=5)
 
+    precio_label = tk.Label(formulario, text="Precio:", bg="black", fg="white")
+    precio_label.pack(pady=5)
+
+    precio = tk.Entry(formulario, bg="white")
+    precio.pack(pady=5)
+    precio.insert(0, producto.get("precio_unitario", ""))
+
     proveedores_label = tk.Label(formulario, text="Proveedor:", bg="black", fg="white")
     proveedores_label.pack(pady=5)
 
     proveedores_editar = tk.Entry(formulario, bg="white")
     proveedores_editar.pack(pady=5)
     proveedores_editar.insert(0, producto.get("id_proveedor", ""))
+    
 
     # Botón de guardar producto
-    boton_editar_producto = tk.Button(formulario, text="Comprar productos", command= lambda: hacer_inventario(id_producto, producto_editar,cantidad_editar, fecha_vencimiento, proveedores_editar,precio_compra_editar, precio_venta_editar, ventana, tabla_producto), activebackground="#F50743", font=("helvetica", 12))
+    boton_editar_producto = tk.Button(formulario, text="Comprar productos", command= lambda: hacer_compra(id_producto, precio,cantidad, proveedores_editar, ventana, tabla_producto, username), activebackground="#F50743", font=("helvetica", 12))
     boton_editar_producto.pack(pady=10, ipadx=10)

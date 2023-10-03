@@ -8,5 +8,5 @@ def inicio_user(contenedor_derecho):
     for widget in contenedor_derecho.winfo_children():
         widget.destroy()
 
-    etiqueta_titulo = tk.Label(contenedor_derecho, text="Inicio", fg=c_blanco, bg=c_verde, font=("Arial", 16, "bold"))
+    etiqueta_titulo = tk.Label(contenedor_derecho, text="Inicio", fg=c_blanco, bg=c_negro, font=("Arial", 16, "bold"))
     etiqueta_titulo.pack(pady=10)

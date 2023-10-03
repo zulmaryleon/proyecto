@@ -2,7 +2,7 @@ import tkinter as tk
 from customtkinter  import CTk, CTkFrame, CTkEntry, CTkLabel, CTkButton, CTkCheckBox
 from tkinter import messagebox, ttk
 from app.login import iniciar_sesion, on_enter
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, cambiar_imagen, avanzar_carrusel, redimensionar_imagen
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, redimensionar_imagen
 
 def crear_vista_login():
     root = CTk() 

@@ -1,7 +1,7 @@
 import tkinter as tk
 from app.admin.inventario import consultar_producto
 from views.confirmar_vender import hacer_venta
-def vender_producto(id_producto, tabla_producto):
+def vender_producto(id_producto, tabla_producto, username):
     producto = consultar_producto(id_producto)
     # Puedes utilizar el valor de id_producto para identificar y editar el proveedpr correspondiente.
     print(f"Editar producto con ID: {id_producto}")
@@ -35,6 +35,8 @@ def vender_producto(id_producto, tabla_producto):
     precio.pack(pady=5)
     precio.insert(0, producto.get("precio_unitario", ""))
 
+    cantidad_actual = producto.get("cantidad_total", "")
+
     # Botón de guardar producto
-    boton_editar_producto = tk.Button(formulario, text="Vender productos", command= lambda: hacer_venta(id_producto, ventana, cantidad, precio, tabla_producto), activebackground="#F50743", font=("helvetica", 12))
+    boton_editar_producto = tk.Button(formulario, text="Vender productos", command= lambda: hacer_venta(id_producto, ventana, cantidad, precio, tabla_producto, cantidad_actual, username), activebackground="#F50743", font=("helvetica", 12))
     boton_editar_producto.pack(pady=10, ipadx=10)

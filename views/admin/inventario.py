@@ -16,7 +16,7 @@ from views.comprar import comprar_producto
 from views.vender import vender_producto
 
 #metodo del boton2
-def inventario(contenedor_derecho):
+def inventario(contenedor_derecho, username):
     # Limpia el contenido anterior
     for widget in contenedor_derecho.winfo_children():
         widget.destroy()
@@ -85,8 +85,8 @@ def inventario(contenedor_derecho):
             id_producto = tabla_inventario.item(item_seleccionado, "values")[0]
             editar_button.configure(command=lambda: editar_producto(id_producto, tabla_inventario))
             eliminar_button.configure(command=lambda: eliminar_producto(id_producto, tabla_inventario))
-            vender_button.configure(command=lambda: vender_producto(id_producto, tabla_inventario))
-            comprar_button.configure(command=lambda: comprar_producto(id_producto, tabla_inventario))
+            vender_button.configure(command=lambda: vender_producto(id_producto, tabla_inventario, username))
+            comprar_button.configure(command=lambda: comprar_producto(id_producto, tabla_inventario, username))
             editar_button.pack(side="left", padx=10, pady=5)
             eliminar_button.pack(side="left", padx=10, pady=5)
             vender_button.pack(side="left", padx=10, pady=5)
