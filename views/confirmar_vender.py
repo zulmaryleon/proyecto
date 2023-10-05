@@ -24,7 +24,7 @@ def hacer_venta(id_producto, ventana, cantidad, precio, tabla_producto, cantidad
         ventana_confirmacion.title("Confirmación")
     
         # Etiqueta de confirmación
-        etiqueta_confirmacion = tk.Label(ventana_confirmacion, text=f"Total a pagar'{total}'")
+        etiqueta_confirmacion = tk.Label(ventana_confirmacion, text=f"Total a pagar '{total}'$")
         etiqueta_confirmacion.pack()
 
         # Botones de confirmar y cancelar

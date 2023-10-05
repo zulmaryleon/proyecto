@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from app.empleado.inventario import datos_tabla_inventario
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, redimensionar_imagen, cerrar_sesion
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, redimensionar_imagen, cerrar_sesion, buscar
 
 # Modulos vistas formularios 
 from views.comprar import comprar_producto
@@ -28,7 +28,7 @@ def inventario_user(contenedor_derecho, username):
     entrada_busqueda.pack(side="left")
 
     # Crear la entrada de búsqueda
-    boton_buscar = tk.Button(frame_buscador, text="Buscar", command=lambda: buscar(tabla_usuarios, entrada_busqueda))
+    boton_buscar = tk.Button(frame_buscador, text="Buscar", command=lambda: buscar(tabla_inventario, entrada_busqueda))
     boton_buscar.pack(side="left")
 
     #crear la tabla de inventario del contenedor derecho

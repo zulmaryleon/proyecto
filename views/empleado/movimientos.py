@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from app.empleado.movimientos import datos_tabla_movimientos
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris
+from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, buscar
 
 #metodo del boton4
 def movimientos_user(contenedor_derecho, id_usuario):
@@ -26,7 +26,7 @@ def movimientos_user(contenedor_derecho, id_usuario):
     entrada_busqueda.pack(side="left")
 
     # Crear el botón de búsqueda
-    boton_buscar = tk.Button(frame_buscador, text="Buscar", command=lambda: buscar(tabla_usuarios, entrada_busqueda))
+    boton_buscar = tk.Button(frame_buscador, text="Buscar", command=lambda: buscar(tabla_movimientos, entrada_busqueda))
     boton_buscar.pack(side="left")
 
     #crear la tabla de inventario del contenedor derecho

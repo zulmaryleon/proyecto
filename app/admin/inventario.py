@@ -164,8 +164,6 @@ def guardar_producto(producto_crear, categoria, precio_crear, cantidad_crear, pr
         ventana_crear_producto.destroy()
         
         messagebox.showinfo("Producto creado", 'Se ha registrado el producto correctamente')
-
-        messagebox.showinfo("producto creado", 'Se ha registrado el producto correctamente')
     except Exception as e:
         conexion.rollback()
         messagebox.showerror("Error", f"No se ha podido registrar el producto: {str(e)}")

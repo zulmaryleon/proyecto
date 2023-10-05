@@ -40,6 +40,7 @@ def crear_vista_dashboard(id_usuario):
     inicio(contenedor_derecho)
     
     if(id_rol == 1):
+        titulo_rol = 'Administrador'
         # Opción 0
         opcion0 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
@@ -70,6 +71,7 @@ def crear_vista_dashboard(id_usuario):
         text='Movimientos', command=lambda: movimientos(contenedor_derecho))
         opcion4.pack(pady=5)
     else:
+        titulo_rol = 'Usuario'
         # Opción 0
         opcion1 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
@@ -108,7 +110,7 @@ def crear_vista_dashboard(id_usuario):
     rol_label = tk.Label(recuadro_inferior, text=f"Username: {str(username)}", bg=c_negro, fg="white", font=("Arial", 14))
     rol_label.pack(padx=10)
 
-    username = tk.Label(recuadro_inferior, text=f"Rol: {str(id_rol)}", bg=c_negro, fg="white", font=("Arial", 14))
+    username = tk.Label(recuadro_inferior, text=f"Rol: {str(titulo_rol)}", bg=c_negro, fg="white", font=("Arial", 14))
     username.pack(padx=10)
 
     #configuramos el cierre de ventana
