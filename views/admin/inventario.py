@@ -60,6 +60,10 @@ def inventario(contenedor_derecho, username):
     tabla_inventario.column("costo_mayor", width=150)
     tabla_inventario.column("precio_unitario", width=150)
 
+    tabla_inventario.tag_configure("amarillo", background="yellow")
+    tabla_inventario.tag_configure("verde", background="light green")
+    tabla_inventario.tag_configure("rojo", background="light coral")
+
     #contenido de la tabla
     datos_tabla_inventario(tabla_inventario)
 
@@ -78,6 +82,20 @@ def inventario(contenedor_derecho, username):
     vender_button = tk.Button(frame_principal, text="Vender", command=lambda: vender_producto(id_producto))
     comprar_button = tk.Button(frame_principal, text="Comprar", command=lambda: comprar_producto(id_producto))
     
+    # Crear un Frame para contener el buscador
+    frame_footer = tk.Frame(frame_principal, bg="white")
+    frame_footer.pack(side="bottom", fill="x")
+
+    #boton de crear producto
+    boton_amarrilo=tk.Button(frame_footer,text="● Bien", bg="light green")
+    boton_amarrilo.pack(side="left",padx=10,pady=5)
+
+    boton_amarrilo=tk.Button(frame_footer,text="● Atencion", bg="yellow")
+    boton_amarrilo.pack(side="left",padx=10,pady=5)
+
+    boton_amarrilo=tk.Button(frame_footer,text="● No hay", bg="light coral")
+    boton_amarrilo.pack(side="left",padx=10,pady=5)
+
     # Configurar la acción de selección de inventario
     def seleccionar_producto(event):
         item_seleccionado = tabla_inventario.selection()

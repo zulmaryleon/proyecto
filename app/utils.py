@@ -17,6 +17,8 @@ azul_claro = '#6699FF'
 rojo_claro = '#FF6666'
 verde = '#00FF00'
 
+logo_img = 'imagenes/logo.png'
+
 conexion = get_database_connection()
 
 def obtener_datos_session(id_usuario):
@@ -49,6 +51,7 @@ def obtener_datos_session(id_usuario):
 # Función para redimensionar una imagen
 def redimensionar_imagen(imagen, ancho, alto):
     return imagen.subsample(int(imagen.width() / ancho), int(imagen.height() / alto))
+
 
 #metodo de cerrar ventanas
 def cerrar_sesion(ventana):

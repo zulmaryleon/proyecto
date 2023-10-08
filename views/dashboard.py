@@ -1,6 +1,8 @@
 import tkinter as tk
 from customtkinter  import CTk, CTkFrame, CTkEntry, CTkLabel, CTkButton, CTkCheckBox
 from app.utils import c_negro, c_verde, c_azul, azul_claro, rojo_claro, plata, blanco_gris, c_gris, redimensionar_imagen, cerrar_sesion, obtener_datos_session
+from app.logout import salir
+
 from views.admin.inicio import inicio
 from views.admin.usuarios import usuarios
 from views.admin.inventario import inventario
@@ -39,14 +41,14 @@ def crear_vista_dashboard(id_usuario):
 
     inicio(contenedor_derecho)
     
+    # Opción 0
+    opcion1 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
+    hover_color=c_azul,corner_radius=12,border_width=2,
+    text='Inicio', command=lambda:inicio(contenedor_derecho)) #, command=lambda: inicio_user(contenedor_derecho)
+    opcion1.pack(pady=5)  
+
     if(id_rol == 1):
         titulo_rol = 'Administrador'
-        # Opción 0
-        opcion0 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
-        hover_color=c_azul,corner_radius=12,border_width=2,
-        text='Inicio', command=lambda: inicio(contenedor_derecho)) #inicio(ventana_dashboard)
-        opcion0.pack(pady=5)
-
         # Opción 1
         opcion1 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
@@ -72,11 +74,6 @@ def crear_vista_dashboard(id_usuario):
         opcion4.pack(pady=5)
     else:
         titulo_rol = 'Usuario'
-        # Opción 0
-        opcion1 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
-        hover_color=c_azul,corner_radius=12,border_width=2,
-        text='Inicio', command=lambda:inicio(contenedor_derecho)) #, command=lambda: inicio_user(contenedor_derecho)
-        opcion1.pack(pady=5)  
 
         # Opción 2
         opcion2 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
@@ -89,6 +86,13 @@ def crear_vista_dashboard(id_usuario):
         hover_color=c_azul,corner_radius=12,border_width=2,
         text='Movimientos', command=lambda:movimientos_user(contenedor_derecho, id_usuario)) #, command=lambda: movimientos(contenedor_derecho) 
         opcion3.pack(pady=5) 
+
+    # Opción 5
+    opcion5 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
+    hover_color=c_azul,corner_radius=12,border_width=2,
+    text='Salir', command=lambda:salir('saliendo')) #, command=lambda: inicio_user(contenedor_derecho)
+    opcion5.pack(pady=5)  
+        
     # Agregar recuadro inferior
     recuadro_inferior = tk.Frame(panel_izquierdo, bg=c_negro, relief="solid")
     recuadro_inferior.pack(side="bottom", fill="x")

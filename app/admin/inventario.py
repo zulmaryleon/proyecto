@@ -78,6 +78,14 @@ def datos_tabla_inventario(tabla):
         #insercion de datos
         tabla.insert("", "end", values=(id_producto, descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor, precio_unitario)) 
 
+         # Asignar etiquetas (tags) según las reglas definidas
+        if cantidad_total < 1:  # Por ejemplo, si quedan 5 o menos productos, etiquetar como "amarillo"
+            tabla.item(tabla.get_children()[-1], tags=("rojo",))
+        elif cantidad_total >= 1 and cantidad_total <= 10:  # Si quedan entre 6 y 10 productos, etiquetar como "verde"
+            tabla.item(tabla.get_children()[-1], tags=("amarillo",))
+        else:  # Si hay más de 10 productos, etiquetar como "rojo"
+            tabla.item(tabla.get_children()[-1], tags=("verde",))
+
 # Función para consultar un producto en MySQL
 def consultar_producto(id_producto):
     cursor = conexion.cursor(dictionary=True)  # Utiliza dictionary=True para obtener un diccionario

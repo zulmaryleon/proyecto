@@ -38,3 +38,7 @@ def iniciar_sesion(usuario_entry, password_entry, ventana):
         messagebox.showerror("Error", "No se pudo conectar a la base de datos")
 
 # Otras funciones relacionadas con el inicio de sesión si las tienes...
+def salir(ventana):
+    ventana.withdraw()  # Oculta la ventana del panel de control
+    print(f"MEnsaje: saliendo")
+    crear_vista_login()

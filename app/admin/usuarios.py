@@ -13,7 +13,7 @@ def datos_tabla_usuarios(tabla):
     tabla.delete(*tabla.get_children())
 
     cursor = conexion.cursor()
-    cursor.execute("select id_usuario, usuario, fecha_ingreso, id_cargo from usuario")
+    cursor.execute("SELECT u.id_usuario, u.usuario, u.fecha_ingreso, c.descripcion_cargo FROM usuario u INNER JOIN cargo c ON u.id_cargo = c.id_cargo")
     resultado= cursor.fetchall()
     for id_usuario, usuario, fecha_ingreso, id_cargo in resultado:
 
@@ -24,7 +24,7 @@ def consultar_usuario(id_usuario):
     cursor = conexion.cursor(dictionary=True)  # Utiliza dictionary=True para obtener un diccionario
     # Consultar el usuario por ID
     try:
-        consulta = "SELECT ci_usuario, usuario, fecha_ingreso, id_cargo FROM usuario WHERE id_usuario = %s"
+        consulta = "SELECT ci_usuario, usuario, fecha_ingreso, descripcion_cargo FROM usuario WHERE id_usuario = %s"
         cursor.execute(consulta, (id_usuario,))
         usuario = cursor.fetchone()
 
@@ -132,6 +132,32 @@ def obtener_id_de_descripcion(descripcion):
         return None
 
 
+# Función para verificar si la cédula ya existe en la base de datos
+def cedula_existe(ci_valor):
+    try:
+        cursor = conexion.cursor()
+        consulta = "SELECT COUNT(*) FROM usuario WHERE ci_usuario = %s"
+        cursor.execute(consulta, (ci_valor,))
+        resultado = cursor.fetchone()[0]
+        cursor.close()
+        return resultado > 0
+    except Exception as e:
+        print(f"Error al verificar cédula: {str(e)}")
+        return False
+
+# Función para verificar si el nombre de usuario ya existe en la base de datos
+def usuario_existe(usuario):
+    try:
+        cursor = conexion.cursor()
+        consulta = "SELECT COUNT(*) FROM usuario WHERE usuario = %s"
+        cursor.execute(consulta, (usuario,))
+        resultado = cursor.fetchone()[0]
+        cursor.close()
+        return resultado > 0
+    except Exception as e:
+        print(f"Error al verificar nombre de usuario: {str(e)}")
+        return False
+        
 def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci, selected_role, ventana_crear_usuario, tabla_usuarios):
     global conexion  # Indicar que estás utilizando la variable global
 
@@ -144,11 +170,21 @@ def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci,
     print(f"Eliminar usuario con ID cargo: {selected_role.get()}")
     print(f"Eliminar usuario con ID cargo: {rol}")
 
+    # Verificar si la cédula ya existe en la base de datos
+    if cedula_existe(ci_valor):
+        messagebox.showerror("Error al registrar", "La cédula ya existe en la base de datos")
+        return
+
+    # Verificar si el nombre de usuario ya existe en la base de datos
+    if usuario_existe(usuario):
+        messagebox.showerror("Error al registrar", "El nombre de usuario ya existe en la base de datos")
+        return
+
     if contrasena == confirmar_contrasena:
         try:
             if not conexion.is_connected():
                 conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
-           
+
             # Abrir cursor
             cursor = conexion.cursor()
             consulta = "INSERT INTO usuario (ci_usuario, usuario, contraseña, fecha_ingreso, id_cargo) VALUES (%s, %s, %s, %s, %s)"

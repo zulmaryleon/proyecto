@@ -2,7 +2,7 @@ import tkinter as tk
 from customtkinter  import CTk, CTkFrame, CTkEntry, CTkLabel, CTkButton, CTkCheckBox
 from tkinter import messagebox, ttk
 from app.login import iniciar_sesion, on_enter
-from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, redimensionar_imagen
+from app.utils import logo_img, c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, redimensionar_imagen
 
 def crear_vista_login():
     root = CTk() 
@@ -20,7 +20,7 @@ def crear_vista_login():
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
 
-    logo = tk.PhotoImage(file='imagenes/logo.png') 
+    logo = tk.PhotoImage(file=logo_img) 
     img_google = tk.PhotoImage(file='imagenes/user.png')
     img_facebook = tk.PhotoImage(file='imagenes/user.png')
 

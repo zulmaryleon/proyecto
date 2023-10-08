@@ -26,13 +26,18 @@ def confirmar(id_producto, tabla_producto, ventana, ventana_confirmacion, cantid
 	try:
 		if not conexion.is_connected():
 			conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
-		
+
 		# Abrir cursor
 		cursor = conexion.cursor()
 		consulta = "UPDATE productos SET cantidad_total = cantidad_total - %s WHERE id_producto = %s"
 		cursor.execute(consulta, (cantidad_val, id_producto))
 
+		# Consulta para registrar el movimiento
+		consulta_insert = "INSERT INTO movimientos (descripcion_movimiento, id_status_movimientos, total, id_usuario, fecha_registro) VALUES (%s, %s, %s, %s, %s)"
+		cursor.execute(consulta_insert, ('venta', '2', cantidad_val, '13', fecha_actual))
+
 		conexion.commit()
+
 		# Actualizar tabla
 		datos_tabla_inventario(tabla_producto)
 
@@ -40,7 +45,7 @@ def confirmar(id_producto, tabla_producto, ventana, ventana_confirmacion, cantid
 		ventana.destroy()
 		ventana_confirmacion.destroy()
 		messagebox.showinfo("Producto vendido", 'Se ha vendido el producto')
-	
+
 	except Exception as e:
 		conexion.rollback()
 		messagebox.showerror("Error", f"No se ha podido vender el producto: {str(e)}")
