@@ -67,3 +67,15 @@ def buscar(tabla, entrada_busqueda):
         else:
             tabla.selection_remove(row_id)
           
+# Función para verificar si la cédula ya existe en la base de datos
+def campo_existe(tabla, campo, valor):
+    try:
+        cursor = conexion.cursor()
+        consulta = f"SELECT COUNT(*) FROM {str(tabla)} WHERE {str(campo)} = {str(valor)}"
+        cursor.execute(consulta)
+        resultado = cursor.fetchone()[0]
+        cursor.close()
+        return resultado > 0
+    except Exception as e:
+        print(f"Error al verificar cédula: {str(e)}")
+        return False          

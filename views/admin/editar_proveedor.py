@@ -1,5 +1,5 @@
 import tkinter as tk
-from app.admin.proveedor import consultar_proveedor, editar_datos_proveedor
+from app.admin.proveedor import consultar_proveedor, editar_datos_proveedor, obtener_prefijo
 def editar_proveedor(id_proveedor, tabla_proveedor):
     proveedor = consultar_proveedor(id_proveedor)
     # Puedes utilizar el valor de id_proveedor para identificar y editar el proveedpr correspondiente.
@@ -29,13 +29,21 @@ def editar_proveedor(id_proveedor, tabla_proveedor):
     codigo_editar.pack(pady=5)
     codigo_editar.insert(0, proveedor.get("codigo", ""))
 
-    prefijo_documento_label = tk.Label(formulario_editar, text="Prefijo Documento:", bg="black", fg="white")
-    prefijo_documento_label.pack(pady=5)
+    # Etiqueta para seleccionar el prefijo del documento
+    prefijo_label = tk.Label(formulario_editar, text="Prefijo Documento:", bg="black", fg="white")
+    prefijo_label.pack(pady=5)
 
-    prefijo_documento_entry = tk.Entry(formulario_editar, bg="white")
-    prefijo_documento_entry.pack(pady=5)
-    prefijo_documento_entry.insert(0, proveedor.get("id_prefijo_documento", ""))
+    # Obtener los roles desde la base de datos
+    prefijos = obtener_prefijo()
+    selected_prefijo = tk.StringVar()
+
+    # Crear una lista de opciones para el menú desplegable
+    opciones_prefijo = [prefijo[1] for prefijo in prefijos]
+
+    # Menú desplegable de roles
+    prefijo_option_menu = tk.OptionMenu(formulario_editar, selected_prefijo, *opciones_prefijo)
+    prefijo_option_menu.pack(pady=5)
 
     # Botón de guardar proveedor
-    boton_editar_proveedor = tk.Button(formulario_editar, text="Editar Proveedor", command= lambda: editar_datos_proveedor(id_proveedor, proveedor_editar,codigo_editar, prefijo_documento_entry, tabla_proveedor, ventana_editar_proveedor), activebackground="#F50743", font=("helvetica", 12))
+    boton_editar_proveedor = tk.Button(formulario_editar, text="Editar Proveedor", command= lambda: editar_datos_proveedor(id_proveedor, proveedor_editar,codigo_editar, selected_prefijo, tabla_proveedor, ventana_editar_proveedor), activebackground="#F50743", font=("helvetica", 12))
     boton_editar_proveedor.pack(pady=10, ipadx=10)

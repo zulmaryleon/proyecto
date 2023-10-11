@@ -1,5 +1,5 @@
 import tkinter as tk
-from app.admin.inventario import consultar_producto, editar_datos_producto
+from app.admin.inventario import consultar_producto, editar_datos_producto, obtener_proveedores
 def editar_producto(id_producto, tabla_producto):
     producto = consultar_producto(id_producto)
     # Puedes utilizar el valor de id_producto para identificar y editar el proveedpr correspondiente.
@@ -39,9 +39,16 @@ def editar_producto(id_producto, tabla_producto):
     proveedores_label = tk.Label(formulario_editar, text="proveedores:", bg="black", fg="white")
     proveedores_label.pack(pady=5)
 
-    proveedores_editar = tk.Entry(formulario_editar, bg="white")
-    proveedores_editar.pack(pady=5)
-    proveedores_editar.insert(0, producto.get("id_proveedor", ""))
+    # Obtener los roles desde la base de datos
+    proveedores = obtener_proveedores()
+    selected_proveedor = tk.StringVar()
+
+    # Crear una lista de opciones para el menú desplegable
+    opciones_proveedor = [proveedor[1] for proveedor in proveedores]
+
+    # Menú desplegable de roles
+    prefijo_option_menu = tk.OptionMenu(formulario_editar, selected_proveedor, *opciones_proveedor)
+    prefijo_option_menu.pack(pady=5)
 
     precio_compra_label = tk.Label(formulario_editar, text="precio_compra:", bg="black", fg="white")
     precio_compra_label.pack(pady=5)
@@ -58,5 +65,5 @@ def editar_producto(id_producto, tabla_producto):
     precio_venta_editar.insert(0, producto.get("precio_unitario", ""))
 
     # Botón de guardar producto
-    boton_editar_producto = tk.Button(formulario_editar, text="Editar producto", command= lambda: editar_datos_producto(id_producto, producto_editar,cantidad_editar, fecha_vencimiento, proveedores_editar,precio_compra_editar, precio_venta_editar, ventana_editar_producto, tabla_producto), activebackground="#F50743", font=("helvetica", 12))
+    boton_editar_producto = tk.Button(formulario_editar, text="Editar producto", command= lambda: editar_datos_producto(id_producto, producto_editar,cantidad_editar, fecha_vencimiento, selected_proveedor, precio_compra_editar, precio_venta_editar, ventana_editar_producto, tabla_producto), activebackground="#F50743", font=("helvetica", 12))
     boton_editar_producto.pack(pady=10, ipadx=10)

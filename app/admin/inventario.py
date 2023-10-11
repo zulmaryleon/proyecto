@@ -71,7 +71,7 @@ def datos_tabla_inventario(tabla):
     tabla.delete(*tabla.get_children())
 
     cursor = conexion.cursor()
-    cursor.execute("select id_producto, descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor, precio_unitario from productos")
+    cursor.execute("select i.id_producto, i.descripcion_producto, i.cantidad_total, i.fecha_vencimiento, p.nombre, i.costo_mayor, i.precio_unitario  from productos i INNER JOIN proveedor p ON i.id_proveedor = p.id_proveedor")
     resultado= cursor.fetchall()
     for id_producto, descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor, precio_unitario in resultado:
 
@@ -79,11 +79,12 @@ def datos_tabla_inventario(tabla):
         tabla.insert("", "end", values=(id_producto, descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor, precio_unitario)) 
 
          # Asignar etiquetas (tags) según las reglas definidas
-        if cantidad_total < 1:  # Por ejemplo, si quedan 5 o menos productos, etiquetar como "amarillo"
+        if cantidad_total < 1:  # Si hay menos de 1 productos, etiquetar como "rojo"
             tabla.item(tabla.get_children()[-1], tags=("rojo",))
-        elif cantidad_total >= 1 and cantidad_total <= 10:  # Si quedan entre 6 y 10 productos, etiquetar como "verde"
+        elif cantidad_total >= 1 and cantidad_total <= 10:  # Por ejemplo, si quedan 10 o menos productos, etiquetar como "amarillo"
+            
             tabla.item(tabla.get_children()[-1], tags=("amarillo",))
-        else:  # Si hay más de 10 productos, etiquetar como "rojo"
+        else:   # Si quedan entre 6 y 10 productos, etiquetar como "verde"
             tabla.item(tabla.get_children()[-1], tags=("verde",))
 
 # Función para consultar un producto en MySQL
@@ -177,11 +178,11 @@ def guardar_producto(producto_crear, categoria, precio_crear, cantidad_crear, pr
         messagebox.showerror("Error", f"No se ha podido registrar el producto: {str(e)}")
 
 
-def editar_datos_producto(id_producto, producto_editar,cantidad_editar, fecha_vencimiento, proveedores_editar,precio_compra_editar, precio_venta_editar, ventana_editar_producto, tabla_producto):
+def editar_datos_producto(id_producto, producto_editar,cantidad_editar, fecha_vencimiento, selected_proveedor, precio_compra_editar, precio_venta_editar, ventana_editar_producto, tabla_producto):
     nombre_producto = producto_editar.get()
     cantidad = cantidad_editar.get()
     vencimiento = fecha_vencimiento.get()
-    proveedor = proveedores_editar.get()
+    proveedor = obtener_id_de_descripcion_proveedores(selected_proveedor.get())
     precio_compra  = precio_compra_editar.get()
     precio_venta = precio_venta_editar.get()
     id_producto = id_producto

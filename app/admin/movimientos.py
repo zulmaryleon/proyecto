@@ -10,8 +10,9 @@ def datos_tabla_movimientos(tabla):
     tabla.delete(*tabla.get_children())
 
     cursor = conexion.cursor()
-    cursor.execute("select id_movimientos, descripcion_movimiento, id_status_movimientos,total, id_usuario, fecha_registro from movimientos")
+    cursor.execute("select m.id_movimientos, m.descripcion_movimiento, m.total, u.usuario from movimientos m INNER JOIN usuario u ON m.id_usuario = u.id_usuario")
+
     resultado= cursor.fetchall()
-    for id_movimientos, descripcion_movimiento, id_status_movimientos, total, id_usuario, fecha_registro  in resultado:
+    for id_movimientos, descripcion_movimiento, usuario, total  in resultado:
         #insercion de datos
-        tabla.insert("", "end", values=(id_movimientos, descripcion_movimiento, id_status_movimientos,total))
+        tabla.insert("", "end", values=(id_movimientos, descripcion_movimiento, usuario, total))

@@ -37,15 +37,15 @@ def proveedor(contenedor_derecho):
 
     tabla_proveedor.heading("#", text="#") 
     tabla_proveedor.heading("nombre", text="Proveedor") 
-    tabla_proveedor.heading("codigo", text="Rif")
-    tabla_proveedor.heading("id_prefijo_documento", text="Documento")
+    tabla_proveedor.heading("id_prefijo_documento", text="Rif")
+    tabla_proveedor.heading("codigo", text="Documento")
     
 
     #ajustar tamaño de columnas
     tabla_proveedor.column("#", width=25)
     tabla_proveedor.column("nombre", width=150)
-    tabla_proveedor.column("codigo", width=150)
-    tabla_proveedor.column("id_prefijo_documento",width=150)
+    tabla_proveedor.column("id_prefijo_documento", width=150)
+    tabla_proveedor.column("codigo",width=150)
     
 
     #contenido de la tabla

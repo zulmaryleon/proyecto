@@ -49,8 +49,6 @@ def confirmar(id_producto, tabla_producto, ventana, ventana_confirmacion, cantid
 	except Exception as e:
 		conexion.rollback()
 		messagebox.showerror("Error", f"No se ha podido vender el producto: {str(e)}")
-	
-	
 
 def calcular(precio, cantidad):
 	cantidad_val = float(cantidad.get())

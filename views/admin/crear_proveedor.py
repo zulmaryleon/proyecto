@@ -32,8 +32,8 @@ def crear_proveedor(tabla_proveedor):
     codigo_entry.pack(pady=5)
 
     # Etiqueta para cantidad
-    # Etiqueta para seleccionar rol del usuario
-    prefijo_label = tk.Label(formulario_crear, text="Rol del Usuario:", bg="black", fg="white")
+    # Etiqueta para seleccionar el prefijo del documento
+    prefijo_label = tk.Label(formulario_crear, text="Prefijo Documento:", bg="black", fg="white")
     prefijo_label.pack(pady=5)
 
     # Obtener los roles desde la base de datos

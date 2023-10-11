@@ -12,12 +12,12 @@ def datos_tabla_proveedor(tabla):
             conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
 
     cursor = conexion.cursor()
-    cursor.execute("select id_proveedor, nombre, codigo, id_prefijo_documento from proveedor")
+    cursor.execute("select p.id_proveedor, p.nombre, p.codigo, d.descripcion_prefijo_cedula from proveedor p INNER JOIN prefijo_documento d ON p.id_prefijo_documento = d.id_prefijo_cedula")
     resultado= cursor.fetchall()
-    for id_proveedor, nombre, codigo, id_prefijo_documento in resultado:
+    for id_proveedor, nombre, codigo, id_prefijo_cedula in resultado:
 
         #insercion de datos
-        tabla.insert("", "end", values=(id_proveedor, nombre, codigo, id_prefijo_documento))
+        tabla.insert("", "end", values=(id_proveedor, nombre, id_prefijo_cedula, codigo))
 
 
 def obtener_id_de_descripcion(descripcion):
