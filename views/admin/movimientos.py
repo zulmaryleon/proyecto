@@ -30,18 +30,18 @@ def movimientos(contenedor_derecho):
     boton_buscar.pack(side="left")
 
     #crear la tabla de inventario del contenedor derecho
-    tabla_movimientos = ttk.Treeview(frame_principal, columns=("id", "descripcion","usuario", "total"), show="headings", style="Custom.Treeview")
+    tabla_movimientos = ttk.Treeview(frame_principal, columns=("id", "descripcion","total", "usuario"), show="headings", style="Custom.Treeview")
 
     tabla_movimientos.heading("id", text="Movimientos") 
     tabla_movimientos.heading("descripcion", text="Descripcion")
-    tabla_movimientos.heading("total", text="Total")
     tabla_movimientos.heading("usuario", text="Usuario")
+    tabla_movimientos.heading("total", text="Total")
 
     #ajustar tamaño de columnas
     tabla_movimientos.column("id", width=150)
     tabla_movimientos.column("descripcion", width=150)
-    tabla_movimientos.column("total",width=100)
     tabla_movimientos.column("usuario",width=100)
+    tabla_movimientos.column("total",width=100)
 
     #contenido de la tabla
     datos_tabla_movimientos(tabla_movimientos)

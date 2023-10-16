@@ -74,9 +74,11 @@ def datos_tabla_inventario(tabla):
     cursor.execute("select i.id_producto, i.descripcion_producto, i.cantidad_total, i.fecha_vencimiento, p.nombre, i.costo_mayor, i.precio_unitario  from productos i INNER JOIN proveedor p ON i.id_proveedor = p.id_proveedor")
     resultado= cursor.fetchall()
     for id_producto, descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor, precio_unitario in resultado:
+        precio_unitario_con_signo = str(precio_unitario) + "$"
+        costo_mayor = str(costo_mayor) + "$"
 
         #insercion de datos
-        tabla.insert("", "end", values=(id_producto, descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor, precio_unitario)) 
+        tabla.insert("", "end", values=(id_producto, descripcion_producto, cantidad_total, fecha_vencimiento, id_proveedor, costo_mayor, precio_unitario_con_signo)) 
 
          # Asignar etiquetas (tags) según las reglas definidas
         if cantidad_total < 1:  # Si hay menos de 1 productos, etiquetar como "rojo"
