@@ -130,19 +130,47 @@ def obtener_id_de_descripcion(descripcion):
         print(f"Error al obtener ID de descripción: {str(e)}")
         return None
 
+def obtener_id_de_documento(descripcion):
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
 
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+
+        # Abrir cursor
+        cursor = conexion.cursor()
+
+        # Consulta SQL para obtener el ID de un cargo basado en la descripción
+        consulta = "SELECT id_prefijo_cedula FROM prefijo_documento WHERE descripcion_prefijo_cedula = %s"
+        cursor.execute(consulta, (descripcion,))
+
+        # Obtener el resultado
+        resultado = cursor.fetchone()
+
+        if resultado:
+            id_prefijo = resultado[0]
+            return id_prefijo
+        else:
+            return None  # Devolver None si no se encuentra la descripción
+
+    except Exception as e:
+        print(f"Error al obtener ID de descripción: {str(e)}")
+        return None
         
-def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci, selected_role, ventana_crear_usuario, tabla_usuarios):
+def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci, selected_role, ventana_crear_usuario, tabla_usuarios, selected_prefijo):
     global conexion  # Indicar que estás utilizando la variable global
 
     ci_valor = ci.get()
     usuario = usuario_crear.get()
     contrasena = password_entry.get()
     confirmar_contrasena = password_crear_confirmar.get()
-    rol = obtener_id_de_descripcion(selected_role.get())  # Función que obtiene la ID basada en la descripción
+    rol = obtener_id_de_descripcion(selected_role.get())  # Función que obtiene la ID basada en la descripción 
+    prefijo_documento=obtener_id_de_documento(selected_prefijo.get())
     fecha_actual = datetime.date.today()
-    print(f"Eliminar usuario con ID cargo: {selected_role.get()}")
-    print(f"Eliminar usuario con ID cargo: {rol}")
+    print(f"usuario con ID rol: {selected_role.get()}")
+    print(f"usuario con ID prefijo_rol: {rol}")
+    print(f"usuario con ID prefijo: {selected_prefijo.get()}")
+    print(f"usuario con ID prefijo documento: {prefijo_documento}")
 
     # Verificar si la cédula ya existe en la base de datos
     if campo_existe("usuario", "ci_usuario",  ci_valor):
@@ -161,8 +189,8 @@ def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci,
 
             # Abrir cursor
             cursor = conexion.cursor()
-            consulta = "INSERT INTO usuario (ci_usuario, usuario, contraseña, fecha_ingreso, id_cargo) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(consulta, (ci_valor, usuario, contrasena, fecha_actual, rol))
+            consulta = "INSERT INTO usuario (ci_usuario, usuario, contraseña, fecha_ingreso, id_cargo, ci_prefijo) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(consulta, (ci_valor, usuario, contrasena, fecha_actual, rol, prefijo_documento))
             
             conexion.commit()
             # Actualizar tabla
@@ -196,3 +224,19 @@ def obtener_roles():
         print(f"Error al obtener los roles desde la base de datos: {str(e)}")
 
     return roles
+
+def obtener_prefijo():
+    prefijo = []
+    try:
+        # Crea un cursor
+        cursor = conexion.cursor()
+
+        # Ejecuta una consulta SQL para obtener los roles
+        cursor.execute("SELECT id_prefijo_cedula, descripcion_prefijo_cedula FROM prefijo_documento")
+
+        # Obtiene todos los resultados de la consulta
+        prefijo = cursor.fetchall()
+    except Exception as e:
+        print(f"Error al obtener los roles desde la base de datos: {str(e)}")
+
+    return prefijo  

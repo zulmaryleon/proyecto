@@ -90,7 +90,7 @@ def crear_vista_dashboard(id_usuario):
     # Opción 5
     opcion5 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
     hover_color=c_azul,corner_radius=12,border_width=2,
-    text='Salir', command=lambda:salir('saliendo')) #, command=lambda: inicio_user(contenedor_derecho)
+    text='Salir', command=lambda:salir(ventana_dashboard)) #, command=lambda: inicio_user(contenedor_derecho)
     opcion5.pack(pady=5)  
         
     # Agregar recuadro inferior

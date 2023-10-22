@@ -94,7 +94,8 @@ def consultar_producto(id_producto):
     cursor = conexion.cursor(dictionary=True)  # Utiliza dictionary=True para obtener un diccionario
     # Consultar el inventario por ID
     try:
-        consulta = "SELECT descripcion_producto, id_categoria, cantidad_total, costo_mayor, precio_unitario, fecha_vencimiento, id_proveedor FROM productos WHERE id_producto = %s"
+        consulta = "SELECT p.descripcion_producto, p.id_categoria, p.cantidad_total, p.costo_mayor, p.precio_unitario, p.fecha_vencimiento, pb.nombre FROM productos p INNER JOIN proveedor pb ON p.id_proveedor = pb.id_proveedor WHERE id_producto = %s"
+
         cursor.execute(consulta, (id_producto,))
         producto = cursor.fetchone()
 

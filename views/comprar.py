@@ -40,7 +40,7 @@ def comprar_producto(id_producto, tabla_producto, username):
 
     proveedores_editar = tk.Entry(formulario, bg="white")
     proveedores_editar.pack(pady=5)
-    proveedores_editar.insert(0, producto.get("id_proveedor", ""))
+    proveedores_editar.insert(0, producto.get("nombre", ""))
     
 
     # Botón de guardar producto
