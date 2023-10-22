@@ -103,8 +103,6 @@ def cancelar_eliminar(ventana_confirmacion):
     ventana_confirmacion.destroy()
 
             
-    
-
 def obtener_id_de_descripcion(descripcion):
     global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
 
@@ -152,7 +150,7 @@ def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci,
         return
 
     # Verificar si el nombre de usuario ya existe en la base de datos
-    if campo_existe("usuario", "usuario", usuario):
+    if campo_existe("usuario", "usuario", f"'{usuario}'"):
         messagebox.showerror("Error al registrar", "El nombre de usuario ya existe en la base de datos")
         return
 

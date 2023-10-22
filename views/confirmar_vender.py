@@ -1,5 +1,5 @@
 import tkinter as tk
-from app.venta import confirmar, cancelar, calcular
+from app.admin.inventario import confirmar_venta, cancelar, calcular
 def hacer_venta(id_producto, ventana, cantidad, precio, tabla_producto, cantidad_actual, username):
     # Puedes utilizar el valor de id_usuario para identificar y eliminar el usuario correspondiente.
     print(f"Eliminar usuario con ID: {id_producto}")
@@ -28,7 +28,7 @@ def hacer_venta(id_producto, ventana, cantidad, precio, tabla_producto, cantidad
         etiqueta_confirmacion.pack()
 
         # Botones de confirmar y cancelar
-        boton_confirmar = tk.Button(ventana_confirmacion, text="Confirmar", command=lambda:confirmar(id_producto, tabla_producto, ventana, ventana_confirmacion, cantidad))
+        boton_confirmar = tk.Button(ventana_confirmacion, text="Confirmar", command=lambda:confirmar_venta(id_producto, tabla_producto, ventana, ventana_confirmacion, cantidad))
         boton_cancelar = tk.Button(ventana_confirmacion, text="Cancelar", command=lambda:cancelar(ventana_confirmacion))
 
         boton_confirmar.pack()
