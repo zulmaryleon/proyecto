@@ -1,5 +1,6 @@
 from tkinter import messagebox
 from app.database import get_database_connection
+from app.utils import campo_existe
 
 # Función para consultar un usuario en MySQL
 conexion = get_database_connection()
@@ -56,6 +57,16 @@ def guardar_proveedor(proveedor_crear, codigo_entry, selected_prefijo, ventana_c
     nombre = proveedor_crear.get()
     codigo= codigo_entry.get()
     prefijo_documento=obtener_id_de_descripcion(selected_prefijo.get())
+    # Verificar si la cédula ya existe en la base de datos
+    if campo_existe("proveedor", "codigo ",  codigo):
+        messagebox.showerror("Error al registrar", "El documento ya existe en la base de datos")
+        return
+
+    # Verificar si el nombre de usuario ya existe en la base de datos
+    if campo_existe("proveedor", "nombre", f"'{nombre}'"):
+        messagebox.showerror("Error al registrar", f"El nombre de proveedor '{nombre}' ya existe en la base de datos")
+        return
+    
     #creamos una sentencia para guardar los datos en la base de datos
     try:
         if not conexion.is_connected():

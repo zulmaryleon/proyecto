@@ -179,7 +179,7 @@ def guardar_usuario(usuario_crear, password_entry, password_crear_confirmar, ci,
 
     # Verificar si el nombre de usuario ya existe en la base de datos
     if campo_existe("usuario", "usuario", f"'{usuario}'"):
-        messagebox.showerror("Error al registrar", "El nombre de usuario ya existe en la base de datos")
+        messagebox.showerror("Error al registrar", f"El nombre de usuario '{usuario}' ya existe en la base de datos")
         return
 
     if contrasena == confirmar_contrasena:

@@ -79,7 +79,7 @@ def crear_vista_dashboard(id_usuario):
         # Opción 2
         opcion2 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
-        text='Inventario', command=lambda:inventario_user(contenedor_derecho, username)) #, command=lambda: inventario_user(contenedor_derecho)
+        text='Inventario', command=lambda:inventario_user(contenedor_derecho, id_user)) #, command=lambda: inventario_user(contenedor_derecho)
         opcion2.pack(pady=5)     
 
         # Opción 4

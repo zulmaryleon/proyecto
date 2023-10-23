@@ -1,5 +1,6 @@
 from tkinter import messagebox
 from app.database import get_database_connection
+from app.utils import campo_existe
 import datetime
 # Función para consultar un producto en MySQL
 conexion = get_database_connection()
@@ -65,6 +66,37 @@ def obtener_id_de_descripcion_proveedores(descripcion):
         if conexion.is_connected():
             cursor.close()
             conexion.close()             
+
+def obtener_id_de_descripcion_producto(descripcion):
+    global conexion  # Asegúrate de que la variable 'conexion' esté configurada correctamente
+
+    try:
+        if not conexion.is_connected():
+            conexion = get_database_connection()  # Vuelve a crear la conexión si es necesario
+
+        # Abrir cursor
+        cursor = conexion.cursor()
+
+        # Consulta SQL para obtener el ID de un cargo basado en la descripción
+        consulta = "SELECT id_producto FROM productos WHERE descripcion_producto = %s"
+        cursor.execute(consulta, (descripcion,))
+
+        # Obtener el resultado
+        resultado = cursor.fetchone()
+
+        if resultado:
+            id_proveedor = resultado[0]
+            return id_proveedor
+        else:
+            return None  # Devolver None si no se encuentra la descripción
+
+    except Exception as e:
+        print(f"Error al obtener ID de descripción: {str(e)}")
+        return None
+    finally:
+        if conexion.is_connected():
+            cursor.close()
+            conexion.close()  
 
 def datos_tabla_inventario(tabla):
     #eliminamos todos lo elementos antes de actualizar
@@ -149,6 +181,7 @@ def guardar_producto(producto_crear, categoria, precio_crear, cantidad_crear, pr
     precio_unitario = precio_unitario_crear.get()
     fecha_vencimiento= fecha_vencimiento_crear.get()
     proveedor = obtener_id_de_descripcion_proveedores(selected_proveedor.get())
+    id_producto = obtener_id_de_descripcion_producto(producto)
     fecha_actual = datetime.date.today()
 
     print(f"Id proveedor: {str(proveedor)}")
@@ -156,6 +189,13 @@ def guardar_producto(producto_crear, categoria, precio_crear, cantidad_crear, pr
     print(f"cantidad: {str(cantidad)}")
     print(f"precio_mayor: {str(precio_mayor)}")
     print(f"precio_unitario: {str(precio_unitario)}")
+    print(f"Buscando producto {str(id_producto)}")
+
+    # Verificar si la cédula ya existe en la base de datos
+    if campo_existe("productos", "id_producto ",  id_producto):
+        messagebox.showerror("Error al registrar", f"El producto {str(producto)} ya existe en la base de datos")
+        return
+    else: print('no ha detectado duplocado de productos')
     #creamos una sentencia para guardar los datos en la base de datos
     try:
         if not conexion.is_connected():

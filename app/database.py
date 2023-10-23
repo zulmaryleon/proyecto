@@ -9,7 +9,7 @@ def get_database_connection():
             'user': 'root',
             'password': '',
             'host': 'localhost',
-            'database': 'cinelandia_inventario',
+            'database': 'cinelandia',
             'raise_on_warnings': True,
         }
 
