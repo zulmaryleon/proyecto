@@ -266,6 +266,10 @@ def confirmar(id_producto, tabla_producto, ventana, ventana_confirmacion, cantid
         consulta = "UPDATE productos SET cantidad_total = cantidad_total + %s WHERE id_producto = %s"
         cursor.execute(consulta, (cantidad_val, id_producto))
 
+        # Consulta para registrar el movimiento
+        consulta_insert = "INSERT INTO movimientos (descripcion_movimiento, id_status_movimientos, total, id_usuario, fecha_registro) VALUES (%s, %s, %s, %s, %s)"
+        cursor.execute(consulta_insert, (id_producto, '2', cantidad_val, username, fecha_actual))
+
         conexion.commit()
         
         # Actualizar tabla
@@ -290,12 +294,13 @@ def cancelar(ventana):
     messagebox.showinfo("Información", "Operación de compra cancelada.")
     ventana.destroy()    
 
-def confirmar_venta(id_producto, tabla_producto, ventana, ventana_confirmacion, cantidad):
+def confirmar_venta(id_producto, tabla_producto, ventana, ventana_confirmacion, cantidad, username):
     global conexion  # Indicar que estás utilizando la variable global
 
     cantidad_val = cantidad.get()
     fecha_actual = datetime.date.today()
     print(f"Venta: {id_producto}")
+    print(f"Venta del usuario: {username}")
     
     try:
         if not conexion.is_connected():
@@ -308,7 +313,7 @@ def confirmar_venta(id_producto, tabla_producto, ventana, ventana_confirmacion, 
 
         # Consulta para registrar el movimiento
         consulta_insert = "INSERT INTO movimientos (descripcion_movimiento, id_status_movimientos, total, id_usuario, fecha_registro) VALUES (%s, %s, %s, %s, %s)"
-        cursor.execute(consulta_insert, (id_producto, '2', cantidad_val, '13', fecha_actual))
+        cursor.execute(consulta_insert, (id_producto, '1', cantidad_val, username, fecha_actual))
 
         conexion.commit()
 

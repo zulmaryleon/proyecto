@@ -4,7 +4,8 @@ from views.confirmar_vender import hacer_venta
 def vender_producto(id_producto, tabla_producto, username):
     producto = consultar_producto(id_producto)
     # Puedes utilizar el valor de id_producto para identificar y editar el proveedpr correspondiente.
-    print(f"Editar producto con ID: {id_producto}")
+    print(f"Vender producto con ID: {id_producto}")
+    print(f"Vender producto usuario con ID: {username}")
     # Abrir la ventana producto
     ventana = tk.Toplevel()
     ventana.title("Vender producto")

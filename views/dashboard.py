@@ -38,6 +38,7 @@ def crear_vista_dashboard(id_usuario):
     datos = obtener_datos_session(id_usuario)
     id_rol = datos[0]
     username = datos[1]
+    id_user = datos[2]
 
     inicio(contenedor_derecho)
     
@@ -46,7 +47,7 @@ def crear_vista_dashboard(id_usuario):
     hover_color=c_azul,corner_radius=12,border_width=2,
     text='Inicio', command=lambda:inicio(contenedor_derecho)) #, command=lambda: inicio_user(contenedor_derecho)
     opcion1.pack(pady=5)  
-
+    print(f'Usuario en sesión: {username} con id {id_user}')
     if(id_rol == 1):
         titulo_rol = 'Administrador'
         # Opción 1
@@ -58,7 +59,7 @@ def crear_vista_dashboard(id_usuario):
         # Opción 2
         opcion2 = CTkButton(panel_izquierdo, border_color=c_azul, fg_color = c_negro,
         hover_color=c_azul,corner_radius=12,border_width=2,
-        text='Inventario', command=lambda: inventario(contenedor_derecho, username))
+        text='Inventario', command=lambda: inventario(contenedor_derecho, id_user))
         opcion2.pack(pady=5)
 
         # Opción 3

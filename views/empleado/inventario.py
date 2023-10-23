@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from app.empleado.inventario import datos_tabla_inventario
+from app.admin.inventario import datos_tabla_inventario
 from app.utils import c_negro, c_verde, c_morado, c_rojo, c_azul, c_blanco, c_gris, c_azul_e, redimensionar_imagen, cerrar_sesion, buscar
 
 # Modulos vistas formularios 
@@ -50,6 +50,10 @@ def inventario_user(contenedor_derecho, username):
     tabla_inventario.column("id_proveedor", width=150)
     tabla_inventario.column("costo_mayor", width=150)
     tabla_inventario.column("precio_unitario", width=150)
+
+    tabla_inventario.tag_configure("amarillo", background="yellow")
+    tabla_inventario.tag_configure("verde", background="light green")
+    tabla_inventario.tag_configure("rojo", background="light coral")
 
     #contenido de la tabla
     datos_tabla_inventario(tabla_inventario)

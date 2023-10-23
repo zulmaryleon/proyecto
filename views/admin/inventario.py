@@ -20,7 +20,8 @@ def inventario(contenedor_derecho, username):
     # Limpia el contenido anterior
     for widget in contenedor_derecho.winfo_children():
         widget.destroy()
-
+    print(f'Usuario navegando en inventario: {username}')
+        
     etiqueta_titulo = tk.Label(contenedor_derecho, text="Inventario", fg=c_blanco, bg=c_negro, font=("Arial", 16, "bold"))
     etiqueta_titulo.pack(pady=10)
 

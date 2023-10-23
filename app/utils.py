@@ -32,7 +32,7 @@ def obtener_datos_session(id_usuario):
         cursor = conexion.cursor()
 
         # Consulta SQL para obtener el ID de un cargo basado en la descripción
-        consulta = "SELECT id_cargo, usuario FROM usuario WHERE id_usuario = %s"
+        consulta = "SELECT id_cargo, usuario, id_usuario FROM usuario WHERE id_usuario = %s"
         cursor.execute(consulta, (id_usuario,))
 
         # Obtener el resultado
